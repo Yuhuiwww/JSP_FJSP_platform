@@ -71,7 +71,7 @@ def get_FJSPconfig(args=None):
                         help='Maximum number of compatible machines for each operation')
     parser.add_argument('--problem_name', type=str, default='FJSP',help='problem_name position')
     parser.add_argument('--max_updates', type=int, default=1000, help='No. of episodes of each env for training')
-    parser.add_argument('--data_source', type=str, default='case')
+    # parser.add_argument('--data_source', type=str, default='case')
     #调度规则
     parser.add_argument('--online_arrivals', type=str2bool, default=False, help='false for static instance (from data) or true for online job arrivals')
     parser.add_argument('--problem_instances', type=str, default='SD1')
