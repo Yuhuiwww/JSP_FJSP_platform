@@ -136,7 +136,7 @@ class FJSP_GNN_optimizer(Bassic_FJSP_optimizer):
             # step_time_last = time.time()
 
             times = []
-            with open(self.config.optimizer + 'Sample---solution-------.txt', 'a') as f:
+            with open('./Result/FJSP/'+self.config.optimizer + 'Sample---solution-------.txt', 'a') as f:
                 f.write(self.config.test_datas_type + str(self.config.Pn_j) + 'x' + str(self.config.Pn_m) + '\n')
                 for i_ins in range(num_ins):
 
