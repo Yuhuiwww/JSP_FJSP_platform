@@ -16,20 +16,20 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Unsupported value encountered.')
 def get_FJSPconfig(args=None):
     parser = argparse.ArgumentParser(description='Arguments for ppo_jssp')
-    parser.add_argument('--optimizer', type=str, default='FJSP_Gurobi')
+    parser.add_argument('--optimizer', type=str, default='FJSP_DAN_optimizer')
     parser.add_argument('--Pn_j', type=int, default=10, help='Number of jobs of instances to test')
     parser.add_argument('--Pn_m', type=int, default=6, help='Number of machines instances to test')
-    parser.add_argument('--test_datas_type', type=str, default='SD2')
+    parser.add_argument('--test_datas_type', type=str, default='SD1')
     parser.add_argument('--data_size', type=int, default=100, help='The number of instances for data generation')
     parser.add_argument('--data_suffix', type=str, default='mix', help='Suffix of the data')
     parser.add_argument('--cover_data_flag', type=str2bool, default=False, help='Whether covering the generated data')
     parser.add_argument('--seed_test', type=int, default=50, help='Seed for testing heuristics')
     parser.add_argument('--test_model', nargs='+', default=['10x6'], help='List of model for testing')
-    parser.add_argument('--model_source', type=str, default='Brandimarte', help='Suffix of the data that model trained on')
-    parser.add_argument('--flag_sample', type=bool, default=False,
+    parser.add_argument('--model_source', type=str, default='SD1', help='Suffix of the data that model trained on')
+    parser.add_argument('--flag_sample', type=bool, default=True,
                         help='Flag ture of false')
     parser.add_argument('--cover_flag', type=str2bool, default=True, help='Whether covering test results of the model')
-    parser.add_argument('--test_datas', type=str, default='Test/FJSP/FJSP_test_datas/',
+    parser.add_argument('--test_datas', type=str, default='Test\data_test\FJSP_test_datas',
                         help='test_datas position')
     parser.add_argument('--sample_times', type=int, default=100, help='Sampling times for the sampling strategy')
     parser.add_argument('--device', type=str, default="cpu", help='device')
@@ -46,12 +46,12 @@ def get_FJSPconfig(args=None):
     parser.add_argument('--FJSP_hidden_dim_actor', type=int, default=64, help='hidden dim of MLP in actor')
     parser.add_argument('--FJSP_num_mlp_layers_critic', type=int, default=3, help='No. of layers in critic MLP')
     parser.add_argument('--FJSP_hidden_dim_critic', type=int, default=64, help='hidden dim of MLP in critic')
-    parser.add_argument('--lr', type=float, default=2e-5, help='lr')
+    parser.add_argument('--lr', type=float, default=3e-4, help='lr')
     parser.add_argument('--gamma', type=float, default=1, help='discount factor')
     parser.add_argument('--gae_lambda', type=float, default=0.98, help='GAE parameter')
     parser.add_argument('--eps_clip', type=float, default=0.2, help='clip parameter for PPO')
     parser.add_argument('--tau', type=float, default=0, help='Policy soft update coefficient')
-    parser.add_argument('--minibatch_size', type=int, default=512, help='Batch size for computing the gradient')
+    parser.add_argument('--minibatch_size', type=int, default=1024, help='Batch size for computing the gradient')
     parser.add_argument('--FJSP_k_epochs', type=int, default=4, help='Update frequency of each episode')
     parser.add_argument('--FJSP_ploss_coef', type=float, default=1, help='Policy loss coefficient')
     parser.add_argument('--FJSP_vloss_coef', type=float, default=0.5, help='Critic loss coefficient')
@@ -61,7 +61,7 @@ def get_FJSPconfig(args=None):
     parser.add_argument('--model_suffix', type=str, default='', help='Suffix of the model')
     parser.add_argument('--seed_train', type=int, default=300, help='Seed for training')
     parser.add_argument('--entloss_coef', type=float, default=0.01, help='entropy loss coefficient')
-    parser.add_argument('--op_per_job', type=float, default=2,
+    parser.add_argument('--op_per_job', type=float, default=0,
                         help='Number of operations per job, default 0, means the number equals m')
     parser.add_argument('--low', type=int, default=1, help='LB of duration')
     parser.add_argument('--high', type=int, default=9, help='UB of duration')
@@ -71,10 +71,10 @@ def get_FJSPconfig(args=None):
                         help='Maximum number of compatible machines for each operation')
     parser.add_argument('--problem_name', type=str, default='FJSP',help='problem_name position')
     parser.add_argument('--max_updates', type=int, default=1000, help='No. of episodes of each env for training')
-    # parser.add_argument('--data_source', type=str, default='case')
+    parser.add_argument('--data_source', type=str, default='case')
     #调度规则
     parser.add_argument('--online_arrivals', type=str2bool, default=False, help='false for static instance (from data) or true for online job arrivals')
-    parser.add_argument('--problem_instances', type=str, default='Brandimarte')
+    parser.add_argument('--problem_instances', type=str, default='SD1')
     parser.add_argument('--dispatching_rule', type=str, default='MWR')
     parser.add_argument('--machine_assignment_rule', type=str, default='SPT')
     parser.add_argument('--File_GAN', type=str, default='[]')
@@ -133,7 +133,7 @@ def get_FJSPconfig(args=None):
     # parser.add_argument('--drop_out', type=float, default=0.)  # dghan parameters
     # parser.add_argument('--episodes', type=int, default=128000)
     # parser.add_argument('--step_validation', type=int, default=10)
-    parser.add_argument('--batch_size', type=int, default=20)
+    parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--valid_batch_size', type=int, default=100)
     parser.add_argument('--num_ins', type=int, default=100,help='算例相干')
     parser.add_argument('--ope_feat_dim', type=int, default=6)
@@ -171,19 +171,6 @@ def get_FJSPconfig(args=None):
 
     parser.add_argument('--actor_in_dim', type=int, default=0)
     parser.add_argument('--critic_in_dim', type=int, default=0)
-
-    # parser.add_argument('--transit', type=int, default=5)
-    # parser.add_argument('--steps_learn', type=int, default=10)
-    # parser.add_argument('--init_type', type=str, default='fdd-divide-mwkr')
-    # parser.add_argument('--gym-id', type=str, default="compiled_env:jss-v4",
-    #                     help='the id of the gym environment')
-    # parser.add_argument('--num-workers', type=int, default=8,
-    #                     help='the number of parallel worker')
-    # parser.add_argument('--exp-name', type=str, default=os.path.basename(__file__).rstrip(".py"),
-    #                     help='the name of this experiment')
-    # parser.add_argument('--wandb-project-name', type=str, default="BenchmarkCPEnv",
-    #                     help="the wandb's project name")
-    # parser.add_argument('--itration', type=int, default=0)
 
 
     config = parser.parse_args()

@@ -1,4 +1,6 @@
 import logging
+import time
+
 import tomli
 import re
 from pathlib import Path
@@ -202,6 +204,7 @@ class Heuristic_Framework:
         self.config = config
 
     def run_rule(self,path):
+        t1 = time.time()
         simulationEnv = SimulationEnv(
             online_arrivals=self.config.online_arrivals
         )
@@ -209,15 +212,17 @@ class Heuristic_Framework:
         if not self.config.online_arrivals:
             try:
                 if self.config.problem_name == 'FJSP':
-                    simulationEnv.JobShop = parse(simulationEnv.JobShop,path)
+                    simulationEnv.JobShop = parse(simulationEnv.JobShop, path)
             except Exception as e:
                 print(f"able to schedule '/fjsp/: {e}")
 
             simulationEnv.simulator.process(run_simulation(simulationEnv, self.config.dispatching_rule,
                                                            self.config.machine_assignment_rule))
             simulationEnv.simulator.run()
+
             logging.info(f"Makespan: {simulationEnv.JobShop.makespan}")
             print('Makespan: ', simulationEnv.JobShop.makespan)
-        return simulationEnv
+        t2 = time.time()
+        return simulationEnv.JobShop.makespan, t2 - t1
 
 

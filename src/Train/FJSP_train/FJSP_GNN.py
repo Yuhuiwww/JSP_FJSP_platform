@@ -1,5 +1,5 @@
 import os,sys
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../../')
 import copy
 import os
 from collections import deque
@@ -24,7 +24,7 @@ class CaseGenerator:
     FJSP instance generator
     '''
 
-    def __init__(self, job_init, num_mas, opes_per_job_min, opes_per_job_max, nums_ope=None, path='../model_/FJSP/FJSP_GNN/',
+    def __init__(self, job_init, num_mas, opes_per_job_min, opes_per_job_max, nums_ope=None, path='./Train/model_/FJSP/FJSP_GNN/',
                  flag_same_opes=True, flag_doc=False):
         if nums_ope is None:
             nums_ope = []
@@ -576,7 +576,7 @@ def get_validate_env(config):
     '''
     Generate and return the validation environment from the validation set ()
     '''
-    file_path = "./Train/FJSP_GNN_train/{}/".format(str(config.Pn_j)+'x'+str(config.Pn_m))
+    file_path = "./Train/FJSP_train/FJSP_GNN_train/{}/".format(str(config.Pn_j)+'x'+str(config.Pn_m))
     valid_data_files = os.listdir(file_path)
     for i in range(len(valid_data_files)):
         valid_data_files[i] = file_path + valid_data_files[i]
@@ -658,7 +658,7 @@ def main(config):
 
     # Generate data files and fill in the header
     str_time = time.strftime("%Y%m%d_%H%M%S", time.localtime(time.time()))
-    save_path = './Result/save/train_{0}'.format(str_time)
+    save_path = './Result/FJSP/save/train_{0}'.format(str_time)
     os.makedirs(save_path)
     # Training curve storage path (average of validation set)
     # writer_ave = pd.ExcelWriter('{0}/training_ave_{1}.xlsx'.format(save_path, str_time))

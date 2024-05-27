@@ -81,12 +81,14 @@ def load_dataDAN(config):
     TEST_DATA = config.test_datas +'/'
     N_JOBS_P = config.Pn_j  # 工件的数量
     N_MACHINES_P = config.Pn_m  # 机床的数量
+
     # 路径problem/FJSP_test_datas/SD1/10x5
-    filesPath = [str(TEST_DATA) + str(N_JOBS_P) + 'x' + str(N_MACHINES_P)]
+    filesPath = [str(TEST_DATA) +'/'+config.test_datas_type+'/'+ str(N_JOBS_P) + 'x' + str(N_MACHINES_P)]
     data_list = []
     for data_name in filesPath:
         data_path = f'./{data_name}'
         data_list.append((load_data_FJSPalgorithm_files(config,data_path), str(N_JOBS_P) + 'x' + str(N_MACHINES_P)))
+    config.num_ins = len(data_list[0][0][0])
     return data_list,config
 
 # 查找最近的文件

@@ -97,7 +97,7 @@ class Tester(object):
         # filesPath =  "./problem/FJSP_Gurobi_test/{}".format(str(self.config.Pn_j)+'x'+str(self.config.Pn_m))
         filesPath = self.config.test_datas+"/{}".format(
             self.config.test_datas_type + '/' + str(self.config.Pn_j) + 'x' + str(self.config.Pn_m))
-        with open(self.config.optimizer + 'solution.txt', 'a') as f:
+        with open('./Result/FJSP/'+self.config.optimizer + 'solution.txt', 'a') as f:
             f.write(self.config.test_datas_type+ str(self.config.Pn_j) + 'x' + str(self.config.Pn_m) + '\n')
             for file_name in os.listdir(filesPath):
                 if file_name.endswith('.fjs'):
@@ -159,10 +159,13 @@ class Tester(object):
                 f.write(str(min_makespan) + ' ' + str(runtime) + '\n')
 
     def test_FJSP_Heuristic(self):
-        filesPath=self.config.test_datas+"{}".format(str(self.config.Pn_j)+'x'+str(self.config.Pn_m))
+        filesPath=self.config.test_datas+'/'+self.config.test_datas_type+"/{}".format(str(self.config.Pn_j)+'x'+str(self.config.Pn_m))
         optimizer = eval(self.config.optimizer)(copy.deepcopy(self.config))
-        for file_name in os.listdir(filesPath):
-            if file_name.endswith('.fjs'):
-                file_path = os.path.join(filesPath, file_name)
-                min_makespan=optimizer.run_rule(file_path)
-                print("最小完工时间", min_makespan)
+        with open('./Result/FJSP/' + self.config.dispatching_rule+self.config.machine_assignment_rule + '00solution.txt', 'a') as f:
+            f.write(self.config.test_datas_type + str(self.config.Pn_j) + 'x' + str(self.config.Pn_m) + '\n')
+            for file_name in os.listdir(filesPath):
+                if file_name.endswith('.fjs'):
+                    file_path = os.path.join(filesPath, file_name)
+                    min_makespan,runtime=optimizer.run_rule(file_path)
+                    # print("最小完工时间", min_makespan)
+                    f.write(str(min_makespan) + ' ' + str(runtime) + '\n')

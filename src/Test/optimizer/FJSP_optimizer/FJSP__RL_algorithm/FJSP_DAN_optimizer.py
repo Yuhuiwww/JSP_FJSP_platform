@@ -11,6 +11,7 @@ from Test.optimizer.FJSP_optimizer.FJSP__RL_algorithm.Basic_FJSP_optimizer impor
 from LoadUtils import strToSuffix, sample_action, SD2_instance_generator
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+
 def setup_seed(seed):
     torch.manual_seed(seed)
     if torch.cuda.is_available():
@@ -19,6 +20,9 @@ def setup_seed(seed):
     np.random.seed(seed)
     random.seed(seed)
     torch.backends.cudnn.deterministic = True
+
+
+
 
 class FJSP_DAN_optimizer(Bassic_FJSP_optimizer):
     def __init__(self,config):
@@ -83,19 +87,19 @@ class FJSP_DAN_optimizer(Bassic_FJSP_optimizer):
                 dataset_job_length.append(job_length)
                 dataset_op_pt.append(op_pt)
         return dataset_job_length, dataset_op_pt
-    def pack_data_from_config(self,data_source, test_data):
-        """
-            load multiple data (specified by the variable 'test_data')
-            of the specified data source.
-        :param data_source: the source of data (SD1/SD2/BenchData)
-        :param test_data: the list of data's name
-        :return: a list of data (matrix form) and its name
-        """
-        data_list = []
-        for data_name in test_data:
-            data_path = f'./data/{data_source}/{data_name}'
-            data_list.append((self.load_data_from_files(data_path), data_name))
-        return data_list
+    # def pack_data_from_config(self,data_source, test_data):
+    #     """
+    #         load multiple data (specified by the variable 'test_data')
+    #         of the specified data source.
+    #     :param data_source: the source of data (SD1/SD2/BenchData)
+    #     :param test_data: the list of data's name
+    #     :return: a list of data (matrix form) and its name
+    #     """
+    #     data_list = []
+    #     for data_name in test_data:
+    #         data_path = f'./data/{data_source}/{data_name}'
+    #         data_list.append((self.load_data_from_files(data_path), data_name))
+    #     return data_list
 
 
 
@@ -198,7 +202,7 @@ class FJSP_DAN_optimizer(Bassic_FJSP_optimizer):
         n_j = data_set[0][0].shape[0]
         n_op, n_m = data_set[1][0].shape
         env = FJSP_DAN_agent(self.config, data_set)
-
+        makespan_list = [0] * len(data_set[0])
         for i in tqdm(range(len(data_set[0])), file=sys.stdout, desc="progress", colour='blue'):
             # copy the testing environment
             JobLength_dataset = np.tile(np.expand_dims(data_set[0][i], axis=0), (sample_times, 1))
@@ -226,8 +230,9 @@ class FJSP_DAN_optimizer(Bassic_FJSP_optimizer):
             t2 = time.time()
             best_makespan = np.min(env.current_makespan)
             test_result_list.append([best_makespan, t2 - t1])
+            makespan_list[i] =best_makespan
 
-        return np.array(test_result_list)
+        return np.array(test_result_list) ,makespan_list
 
     def greedy_strategy(self,data_set, model_path, seed,File_GAN):
         """
@@ -247,7 +252,7 @@ class FJSP_DAN_optimizer(Bassic_FJSP_optimizer):
         # n_j = data_set[0][0].shape[0]
         # n_op, n_m = data_set[1][0].shape
         env = FJSP_DAN_agent(self.config, data_set)
-
+        makespan_list=[0]*len(data_set[0])
         for i in tqdm(range(len(data_set[0])), file=sys.stdout, desc="progress", colour='blue'):
 
             state = env.set_initial_data([data_set[0][i]], [data_set[1][i]])
@@ -271,64 +276,85 @@ class FJSP_DAN_optimizer(Bassic_FJSP_optimizer):
             t2 = time.time()
 
             test_result_list.append([env.current_makespan[0], t2 - t1])
-            print('makespan:',File_GAN[i], env.current_makespan[0])
 
-        return np.array(test_result_list)
+            print('makespan:',File_GAN[i], env.current_makespan[0])
+            makespan_list[i]=env.current_makespan[0]
+
+        return np.array(test_result_list),makespan_list
     def update(self, test_data, config):
         setup_seed(config.seed_test)
-        if not os.path.exists(f'./Result/test_results_fjsp'):
-            os.makedirs('./Result/test_results_fjsp')
+        if not os.path.exists(f'./Result/FJSP'):
+            os.makedirs('./Result/FJSP')
 
         # collect the path of test models
-        test_model = []
 
-        model_name = '{}'.format(str(config.Pn_j) + 'x' + str(config.Pn_m))
-        test_model.append((f'./Result/trained_network_FJSPDAN/{model_name}.pth', model_name))
+        model = [['10x5'], ['15x10'], ['20x5'], ['20x10']]
+        with open('./Result/FJSP'+self.config.optimizer + 'Sample--solution-------.txt', 'a') as f:
+            for model_num in model:
+                f.write(self.config.test_datas_type + str(self.config.Pn_j) + 'x' + str(self.config.Pn_m) + '\n')
+                start_time = time.time()
+                config.test_model=model_num
+                for model_name in config.test_model:
+                    test_model = []
+                    test_model.append((f'./Train/model_/FJSP/FJSP_DAN/{model_name}.pth', model_name))
 
+                # collect the test data
+                # test_data = self.pack_data_from_config(config.data_source, config.test_data)
 
-        # collect the test data
-        # test_data = self.pack_data_from_config(config.data_source, config.test_data)
+                if config.flag_sample:
+                    model_prefix = "DANIELS"
+                else:
+                    model_prefix = "DANIELG"
 
-        if config.flag_sample:
-            model_prefix = "DANIELS"
-        else:
-            model_prefix = "DANIELG"
+                for data in test_data:
+                    print("-" * 25 + "Test Learned Model" + "-" * 25)
+                    print(f"test data name: {data[1]}")
+                    print(f"test mode: {model_prefix}")
+                    save_direc = f'./Result/FJSP/{config.test_datas_type}/{data[1]}'
+                    if not os.path.exists(save_direc):
+                        os.makedirs(save_direc)
+                    min_makespan=[999999]*len(config.File_GAN)
+                    time_total=[0]*len(config.File_GAN)
+                    for model in test_model:
+                        print('model--------------------',model)
+                        save_path = save_direc + f'/Result_{model_prefix}+{model[1]}_{data[1]}.npy'
+                        if (not os.path.exists(save_path)) or config.cover_flag:
+                            print(f"Model name : {model[1]}")
+                            print(f"data name: ./{config.test_datas}/{data[1]}")
 
-        for data in test_data:
-            print("-" * 25 + "Test Learned Model" + "-" * 25)
-            print(f"test data name: {data[1]}")
-            print(f"test mode: {model_prefix}")
-            save_direc = f'./Result/test_results_fjsp/{config.test_datas_type}/{data[1]}'
-            if not os.path.exists(save_direc):
-                os.makedirs(save_direc)
+                            if not config.flag_sample:
+                                print("Test mode: Greedy")
+                                result_5_times = []
+                                # Greedy mode, test 5 times, record average time.
+                                for j in range(5):
+                                    result,makespan_list = self.greedy_strategy(data[0], model[0], config.seed_test,config.File_GAN)
+                                    result_5_times.append(result)
+                                    for file_num in range(len(config.File_GAN)):
+                                        time_total[file_num]+=result[file_num][1]
+                                        if (min_makespan[file_num] > makespan_list[file_num]):
+                                            min_makespan[file_num] = makespan_list[file_num]
+                                result_5_times = np.array(result_5_times)
 
-            for model in test_model:
-                save_path = save_direc + f'/Result_{model_prefix}+{model[1]}_{data[1]}.npy'
-                if (not os.path.exists(save_path)) or config.cover_flag:
-                    print(f"Model name : {model[1]}")
-                    print(f"data name: ./{config.test_datas}/{data[1]}")
+                                save_result = np.mean(result_5_times, axis=0)
+                                print("testing results:")
+                                print(f"makespan(greedy): ", save_result[:, 0])
+                                print(f"平均--makespan(greedy): ", save_result[:, 0].mean())
+                                print(f"time: ", save_result[:, 1].mean())
 
-                    if not config.flag_sample:
-                        print("Test mode: Greedy")
-                        result_5_times = []
-                        # Greedy mode, test 5 times, record average time.
-                        for j in range(5):
-                            result = self.greedy_strategy(data[0], model[0], config.seed_test,config.File_GAN)
-                            result_5_times.append(result)
-                        result_5_times = np.array(result_5_times)
+                            else:
+                                # Sample mode, test once.
+                                print("Test mode: Sample")
+                                save_result,makespan_list = self.sampling_strategy(data[0], model[0], config.sample_times, config.seed_test)
+                                for file_num in range(len(config.File_GAN)):
+                                    time_total[file_num] += save_result[file_num][1]
+                                    if (min_makespan[file_num] > makespan_list[file_num]):
+                                        min_makespan[file_num] = makespan_list[file_num]
 
-                        save_result = np.mean(result_5_times, axis=0)
-                        print("testing results:")
-                        print(f"makespan(greedy): ", save_result[:, 0])
-                        print(f"平均--makespan(greedy): ", save_result[:, 0].mean())
-                        print(f"time: ", save_result[:, 1].mean())
-
-                    else:
-                        # Sample mode, test once.
-                        print("Test mode: Sample")
-                        save_result = self.sampling_strategy(data[0], model[0], config.sample_times, config.seed_test)
-                        print("testing results:")
-                        print(f"makespan(sampling): ", save_result[:, 0])
-                        print(f"平均--makespan(greedy): ", save_result[:, 0].mean())
-                        print(f"time: ", save_result[:, 1].mean())
-                    np.save(save_path, save_result)
+                                print("testing results:")
+                                print(f"makespan(sampling): ", save_result[:, 0])
+                                print(f"平均--makespan(greedy): ", save_result[:, 0].mean())
+                                print(f"time: ", save_result[:, 1].mean())
+                            runtime = time.time() - start_time
+                            np.save(save_path, save_result)
+                    for file_num1 in range(len(config.File_GAN)):
+                        f.write(str(min_makespan[file_num1]) + ' ' + str(time_total[file_num1]) + '\n')

@@ -12,28 +12,30 @@ waiting...
 
 ```python
 src   
-├── Problem                         					 // 
-├── Result                         						 // 
-│       └── FJSP                        				 // 
-│       └── JSP                        					 // 
-├── Test          					 					 // 
-│       └── agent                       				 // 
-│       └── data_test                    				 // 
-│       └── environment                   				 // 
-│       └── optimizer                         			 // 
-├── Train         										 // 
-│       └── End2End                       				 // 
-│       └── FJSP_DAN_train                       		 // 
-│       └── FJSP_GNN_train                       		 // 
-│       └── FJSP_learning_train                       	 // 
-│       └── JSP_learning_train                       	 // 
-│       └── L2D_train                       			 // 
-│       └── L2S_train                       			 // 
-│       └── model_                       				 // 
-├── main         										 // 
-├── test         										 // 
-├── FJSP_config         								 // 
-├── JSP_config         									 // 
+├── Problem                         			 // Problem module
+│       └── Basic_problem.py                        	 // Problem base class interface
+│       └── FJSP.py                        	         // FJSP decoding
+│       └── JSP.py                        		 // JSP decoding
+├── Result                         		         // Store results
+│       └── FJSP                        		 // Results for FJSP baselines
+│       └── JSP                        			 // Results for FJSP baselines
+├── Test          					 // Test module
+│       └── agent                       		 // Agent class file
+│       └── data_test                    		 // Benchmarks
+│       └── environment                   		 // Environment
+│       └── optimizer                         		 // Optimizer class file
+├── Train         					 // Train module
+│       └── FJSP_train                      		 // Baselines to be trained in FJSP
+│       └── JSP_train                      		 // Baselines to be trained in JSP│       
+│       └── FJSP_generate_trainSet                       // Randomly generate FJSP training instances
+│       └── JSP_generate_trainSet                     	 // Randomly generate JSP training instances
+├── main.py         				         // Main function 
+├── test.py         					 // Load the baseline type and benchmarks to be tested
+├── FJSP_config.py         				 // Parameter configuration of FJSP
+├── JSP_config.py         				 // Parameter configuration of JSP
+├── LoadUtils.py         				 // Load datas of JSP and FJSP
+
+
 ```
 
 
@@ -126,27 +128,32 @@ cd ../src
 
 **To train L2D in JSP, we run the following command:**
 
-python .\Train\trainL2D.py --test_datas Train/L2D_train/ --device cpu --problem_name JSP
+python .\Train\JSP_train\trainL2D.py --test_datas Train/JSP_train/L2D_train/ --device cpu --problem_name JSP
 
- 
+**To train L2D in JSP, we run the following command:**
+
+python main.py --optimizer L2D_optimizer --test_datas Test/data_test/JSP_benchmark/ --device cpu --problem_name JSP
 
 **To run LPT in JSP heuristic rules, we execute the following command for training:**
 
 python main.py --optimizer LPT --test_datas Test/data_test/JSP_benchmark/ --device cpu --problem_name JSP
-
  
+Tips: To convert JSP to FJSP, you need to modify the main function
 
 **To train FJSP_DAN in the FJSP, we execute the following command:** 
 
-python .\Train\FJSP_DAN_train.py --test_datas Train/FJSP_DAN_train/ --device cpu --problem_name FJSP
+python .\Train\FJSP_train\FJSP_DAN.py --test_datas Train/FJSP_train/FJSP_DAN_train/ --device cpu --problem_name FJSP
 
- 
+**To run FJSP_DAN in the FJSP, we execute the following command:**
+
+python main.py --optimizer FJSP_DAN_optimizer --test_datas Test\data_test\FJSP_test_datas --device cpu --problem_name FJSP
 
 **To run Gurobi of FJSP, we execute the following command:**
 
 python main.py --optimizer FJSP_Gurobi --test_datas Test\data_test\FJSP_test_datas --device cpu --problem_name FJSP --FJSP_gurobi_time_limit 3600
 
- 
+**To run MWR_SPT of FJSP, we execute the following command:**
+python main.py --optimizer Heuristic_Framework --test_datas Test\data_test\FJSP_test_datas --device cpu --problem_name FJSP --dispatching_rule MWR --machine_assignment_rule SPT
 
 **Datasets**
 

@@ -1,5 +1,5 @@
 import os,sys
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../../')
 from copy import deepcopy
 import os
 import random
@@ -144,8 +144,8 @@ class Trainer:
         self.validate_timestep = config.validate_timestep
         self.num_envs = config.FJSP_num_envs
 
-        if not os.path.exists(f'./Train/model_/FJSP/FJSP_DAN/trained_network/'):
-            os.makedirs(f'./Train/model_/FJSP/FJSP_DAN/trained_network/')#f'./Train/model_/FJSP/FJSP_DAN/trained_network/'
+        if not os.path.exists(f'./Train/model_/FJSP/FJSP_DAN/'):
+            os.makedirs(f'./Train/model_/FJSP/FJSP_DAN/')#f'./Train/model_/FJSP/FJSP_DAN/trained_network/'
         if not os.path.exists(f'./Train/model_/FJSP/FJSP_DAN/train_log/'):
             os.makedirs(f'./Train/model_/FJSP/FJSP_DAN/train_log/{self.data_source}')
 
@@ -162,8 +162,8 @@ class Trainer:
             self.data_name = f'{self.n_j}x{self.n_m}'
 
         # self.vali_data_path = f'./problem/FJSP_test_datas/data_train_vali/{self.data_source}/{self.data_name}'
-        self.vali_data_path = f'./Train/FJSP_DAN_train/{self.data_source}/{self.data_name}'
-        self.test_data_path = f'./Train/FJSP_DAN_train/{self.data_source}/{self.data_name}'
+        self.vali_data_path = f'./Train/FJSP_train/FJSP_DAN_train/{self.data_source}/{self.data_name}'
+        self.test_data_path = f'./Train/FJSP_train/FJSP_DAN_train/{self.data_source}/{self.data_name}'
         self.model_name = f'{self.data_name}{strToSuffix(config.model_suffix)}'
 
         # seed
@@ -403,13 +403,13 @@ class Trainer:
         """
             save the model
         """
-        torch.save(self.ppo.policy.state_dict(), f'./Result/trained_network_FJSPDAN/{self.model_name}.pth')
+        torch.save(self.ppo.policy.state_dict(), f'./Train/model_/FJSP/FJSP_DAN/{self.model_name}.pth')
 
     def load_model(self):
         """
             load the trained model
         """
-        model_path = f'./Train/model_/FJSP/FJSP_DAN/trained_network/{self.data_source}/{self.model_name}.pth'
+        model_path = f'./Train/model_/FJSP/FJSP_DAN/{self.data_source}/{self.model_name}.pth'
         self.ppo.policy.load_state_dict(torch.load(model_path, map_location=device))
 
 
