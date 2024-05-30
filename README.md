@@ -137,7 +137,7 @@ python main.py --optimizer L2D_optimizer --test_datas Test/data_test/JSP_benchma
 **To run LPT in JSP heuristic rules, we execute the following command for training:**
 
 python main.py --optimizer LPT --test_datas Test/data_test/JSP_benchmark/ --device cpu --problem_name JSP
- 
+
 Tips: To convert JSP to FJSP, you need to modify the main function
 
 **To train FJSP_DAN in the FJSP, we execute the following command:** 
@@ -169,14 +169,14 @@ The learning-based algorithms in JSP and FJSP include:
 
 | **JSP**     |                                                              |                                                              |
 | ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| L2D         | 2020                                                         | Learning to dispatch for job shop scheduling via deep reinforcement learning. |
-| L2S         | 2022                                                         | Learning to search for job shop scheduling via deep reinforcement learning. |
-| RL-GNN      | 2021                                                         | Learning to schedule job-shop problems: representation and policy learning using graph neural network and reinforcement learning. |
-| ScheduleNet | 2021                                                         | ScheduleNet: Learn to solve multi-agent scheduling problems with reinforcement learning. |
-| JSSEnv      | 2021                                                         | A reinforcement learning environment for job-shop scheduling. |
+| L2D         | [2020](https://proceedings.neurips.cc/paper_files/paper/2020/hash/11958dfee29b6709f48a9ba0387a2431-Abstract.html) | Learning to dispatch for job shop scheduling via deep reinforcement learning. |
+| L2S         | [2022](https://arxiv.org/abs/2211.10936)                     | Learning to search for job shop scheduling via deep reinforcement learning. |
+| RL-GNN      | [2021](https://www.tandfonline.com/doi/abs/10.1080/00207543.2020.1870013) | Learning to schedule job-shop problems: representation and policy learning using graph neural network and reinforcement learning. |
+| ScheduleNet | [2021](https://arxiv.org/abs/2106.03051)                     | ScheduleNet: Learn to solve multi-agent scheduling problems with reinforcement learning. |
+| JSSEnv      | [2021](https://arxiv.org/abs/2104.03760)                     | A reinforcement learning environment for job-shop scheduling. |
 | **FJSP**    |                                                              |                                                              |
-| FJSP_DAN    | [2022](https://ieeexplore.ieee.org/abstract/document/9953057) | Flexible job-shop scheduling via graph neural network and deep reinforcement learning. |
-| FJSP_GNN    | 2023                                                         | Flexible job shop scheduling via dua[l](https://www.sciencedirect.com/science/article/pii/S221065022400018X) attention network-based reinforcement learning. |
+| FJSP_DAN    | [2022](https://ieeexplore.ieee.org/abstract/document/9826438) | Flexible job-shop scheduling via graph neural network and deep reinforcement learning. |
+| FJSP_GNN    | [2023](https://ieeexplore.ieee.org/abstract/document/10246328) | Flexible job shop scheduling via dual attention network-based reinforcement learning. |
 
 In addition to these mentioned learning-based algorithms, for the JSP, the non-learning algorithms include:
 
