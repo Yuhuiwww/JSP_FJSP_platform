@@ -4,7 +4,12 @@
 
 ## **Citing**
 
-waiting...
+```latex
+@inproceedings{BPLS-JSS,
+author={Hui Yu, Zhiguang Cao, Kaizhou Gao, Wen Song, Cong Zhang, Yaoxin Wu, Yaping Fu},
+title={BPLS-JSS: A Benchmark Platform for Evaluating Learning-based job shop Scheduling Algorithms}
+}
+```
 
 
 
