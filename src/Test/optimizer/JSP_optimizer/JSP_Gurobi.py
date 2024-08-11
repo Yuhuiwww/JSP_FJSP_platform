@@ -24,7 +24,7 @@ class JSPModel:
             X = model.addVars(self.n, self.m, vtype=GRB.CONTINUOUS, name="x")
             # Add decision variable Z
             # Z[k][i][j] is equal to 1 if job k precedes job i on machine j
-            Z = model.addVars(self.n, self.n, self.m, vtype=GRB.BINARY, name='z')  # 变量x_{it}
+            Z = model.addVars(self.n, self.n, self.m, vtype=GRB.BINARY, name='z')  # Variable x_{it}
 
             # Temporary variable Cmax
             Cmax = model.addVar(lb=0.0, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, name="C_max")

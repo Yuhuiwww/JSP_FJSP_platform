@@ -135,7 +135,7 @@ def get_FJSPconfig(args=None):
     # parser.add_argument('--step_validation', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--valid_batch_size', type=int, default=100)
-    parser.add_argument('--num_ins', type=int, default=100,help='算例相干')
+    parser.add_argument('--num_ins', type=int, default=100,help='arithmetic correlation')
     parser.add_argument('--ope_feat_dim', type=int, default=6)
     parser.add_argument('--ma_feat_dim', type=int, default=3)
     parser.add_argument('--in_size_ma', type=int, default=3)

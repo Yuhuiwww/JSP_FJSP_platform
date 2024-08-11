@@ -15,7 +15,7 @@ dev = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 class MLP(torch.nn.Module):
     """
-    多层感知机模型
+    MLP Model
     """
 
     def __init__(self,
@@ -109,7 +109,7 @@ class RLGNNLayer(MessagePassing):
 
 class RLGNN(torch.nn.Module):
     """
-    图神经网络模型
+    GNN Model
     """
 
     def __init__(self,

@@ -69,7 +69,7 @@ class EnvState:
 def greedy_select_action(p):
     _, index = torch.max(p, dim=1)
     return index
-#基类
+#base class
 class FJSP_DAN_agent(Basic_FJSP_agent):
     """
         a batch of fjsp environments that have the same number of operations

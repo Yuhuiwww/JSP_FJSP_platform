@@ -16,7 +16,7 @@ if __name__ == '__main__':
     M = [10, 15, 6, 10, 5, 5, 10, 5, 10, 15, 5, 10, 10, 10, 10, 15, 10,20,15, 20, 15, 20, 15, 20, 15, 20,15, 15, 20, 15, 20, 15, 20, 20]
     prefer = [('abz', 2), ('ft', 3), ('la', 8), ('orb', 1), ('swv', 3), ('yn', 1),('dmu', 8),('tai', 8)]
     count=0
-    # # # 循环prefer
+    # # # Loop prefer
     for i in range(len(prefer)):
         name,times = prefer[i]
         for j in range(times):

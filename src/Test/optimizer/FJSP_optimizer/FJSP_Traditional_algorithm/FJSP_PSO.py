@@ -417,7 +417,7 @@ class FJSP_PSO(FJSP_Basic_algorithm):
     def f3_operator(self,half_chr, chr_Fk, global_best_chr, pf, job_op_num):
         # Decomposition into ms and os, where os_Xk is unchanged
         # if chr_Fk is None:
-        #     # 如果 chr_Fk 是 NoneType
+        #     # if chr_Fk is NoneType
         #     print("chr_Fk is None")
         # if global_best_chr is None:
         #     print("global_best_chr is None")

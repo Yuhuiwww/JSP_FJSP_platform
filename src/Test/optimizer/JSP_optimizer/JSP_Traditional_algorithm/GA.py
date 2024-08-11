@@ -184,7 +184,7 @@ class GA(Basic_Algorithm):
     #     config = self.__config
     #     population_size = self.population_size
     #     population_list = self.generate_init_pop(population_size,config.Pn_j, config.Pn_m)
-    #     # 配置problem_name
+    #     # Configure problem_name
     #     # problem = eval(config.problem_name)(copy.deepcopy(config.Pn_j),copy.deepcopy(config.Pn_m))
     #     min_makespan=999999
     #     for i in tqdm(range(self.num_iteration)):
@@ -219,7 +219,7 @@ class GA(Basic_Algorithm):
                 start_time = time.time()
                 population_list = self.generate_init_pop(population_size, config.Pn_j, config.Pn_m)
                 for run in range(100000):
-                    # 配置problem_name
+                    # Configure problem_name
                     # problem = eval(config.problem_name)(copy.deepcopy(config.Pn_j),copy.deepcopy(config.Pn_m))
                     parentlist, childlist = self.job_order_crossover(population_list, config.Pn_j, self.crossover_rate)
                     self.mutation(childlist, self.num_mutation_jobs, self.mutation_rate, dataset, config)

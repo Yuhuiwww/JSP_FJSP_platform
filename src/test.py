@@ -93,7 +93,7 @@ class Tester(object):
                 f.write(str(makespan) + ' ' + str(runtime) + '\n')
 
     def FJSP_Gurobi(self):
-        # 路径problem/FJSP_test_datas/SD1/10x5
+        # path problem/FJSP_test_datas/SD1/10x5
         # filesPath =  "./problem/FJSP_Gurobi_test/{}".format(str(self.config.Pn_j)+'x'+str(self.config.Pn_m))
         filesPath = self.config.test_datas+"/{}".format(
             self.config.test_datas_type + '/' + str(self.config.Pn_j) + 'x' + str(self.config.Pn_m))
@@ -103,7 +103,7 @@ class Tester(object):
                 if file_name.endswith('.fjs'):
                     file_path = os.path.join(filesPath, file_name)
                     data=FJSP_load_gurobi(file_path)
-                    print("进行一次Gurobi验证......")
+                    print("Perform a Gurobi validation......")
                     model=FJSPModel(self.config)
                     makespan,runtime=model.FJSP_solveGurobi(data)
                     f.write(str(makespan) + ' ' + str(runtime) + '\n')
@@ -130,7 +130,7 @@ class Tester(object):
     #     with open(self.config.optimizer + '-solution.txt', 'a') as f:
     #         f.write(self.config.test_datas_type + str(self.config.Pn_j) + 'x' + str(self.config.Pn_m) + '\n')
     #         for i in range(len(dataset)):
-    #             print("第",i,"个算例")
+    #             print("The ",i," example")
     #             # optimizer.run_episode(problem, dataset[i])
     #             min_makespan = optimizer.run_episode(problem, dataset[i])
     #             f.write(str(min_makespan) + '\n')

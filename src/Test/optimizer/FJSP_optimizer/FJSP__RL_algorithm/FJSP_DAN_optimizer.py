@@ -338,7 +338,7 @@ class FJSP_DAN_optimizer(Bassic_FJSP_optimizer):
                                 save_result = np.mean(result_5_times, axis=0)
                                 print("testing results:")
                                 print(f"makespan(greedy): ", save_result[:, 0])
-                                print(f"平均--makespan(greedy): ", save_result[:, 0].mean())
+                                print(f"average--makespan(greedy): ", save_result[:, 0].mean())
                                 print(f"time: ", save_result[:, 1].mean())
 
                             else:
