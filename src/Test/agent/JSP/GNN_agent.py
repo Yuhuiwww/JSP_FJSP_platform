@@ -8,19 +8,19 @@ from Test.agent.JSP.Basic_agent import Basic_Agent
 
 class GNN_agent(Basic_Agent):
     """
-       模拟器初始化函数
+       Simulator initialization function
 
-       参数：
-       num_machines：int，作业车间的机器数量
-       num_jobs：int，作业的数量
-       detach_done：bool，指示作业是否已完成
-       name：str，模拟器的名称
-       machine_matrix：ndarray，机器矩阵
-       processing_time_matrix：ndarray，处理时间矩阵
-       embedding_dim：int，嵌入维度
-       use_surrogate_index：bool，是否使用代理索引
-       delay：bool，是否延迟
-       verbose：bool，是否显示详细信息
+       parameters：
+       num_machines：int，Number of machines in the workshop
+       num_jobs：int，Number of operations
+       detach_done：bool，Indicates the job has been completed
+       name：str，Name of the simulator
+       machine_matrix：ndarray，matrix of machines
+       processing_time_matrix：ndarray，Matrix of processing times
+       embedding_dim：int，Embedded Dimension
+       use_surrogate_index：bool，proxy indexing
+       delay：bool，delay
+       verbose：bool，Show details
        """
     def __init__(self,config,data):
         self.machine_manager = None
@@ -55,7 +55,7 @@ class GNN_agent(Basic_Agent):
         # simulation procedure : global_time +=1 -> do_processing -> transit
 
     def reset(self,data,config):
-        """重置模拟器状态的方法"""
+        """Methods to reset the emulator state"""
         self.global_time = 0  # -1 matters a lot
         self.job_manager = JobManager(config, self.machine_matrix,
                                       self.processing_time_matrix,
@@ -72,7 +72,7 @@ class GNN_agent(Basic_Agent):
 
     def transit(self, action=None,):
         if action is None:
-            # 执行随机动作
+            # Execute random actions
             machine = random.choice(self.machine_manager.get_available_machines())
             op_id = random.choice(machine.doable_ops_id)
             job_id, step_id = self.job_manager.sur_index_dict[op_id]
@@ -83,11 +83,11 @@ class GNN_agent(Basic_Agent):
             return op_id
         else:
             if self.use_surrogate_index:
-                # 使用代理索引时进行状态转移
+                # Transferring state when using proxy indexes
                 if action in self.job_manager.sur_index_dict.keys():
                     job_id, step_id = self.job_manager.sur_index_dict[action]
                 else:
-                    raise RuntimeError("输入的动作无效")
+                    raise RuntimeError("Input action is invalid")
             else:
                 job_id, step_id = action
 
@@ -112,7 +112,7 @@ class GNN_agent(Basic_Agent):
             all_machine_work = False if bool(do_op_dict) else True
 
             if all_machine_work:
-                # 所有机器在处理中，继续进行模拟
+                # All machines in process. Continue simulation.
                 self.process_one_time()
             else:
                 num_ops_counter = 1
@@ -129,14 +129,14 @@ class GNN_agent(Basic_Agent):
                         num_ops_counter *= num_ops
 
                 if num_ops_counter != 1:
-                    # 不是全部微不足道的动作，跳出循环
+                    # Not all insignificant movements，Jump out of the loop.
                     break
 
             jobs_done = [job.job_done for _, job in self.job_manager.jobs.items()]
             done = True if np.prod(jobs_done) == 1 else False
 
             if done:
-                # 模拟结束
+                # End of the simulation
                 break
 
         return m_list, cum_reward, done, sub_list
@@ -158,7 +158,7 @@ class GNN_agent(Basic_Agent):
             if machine_id in available_machines:
                 ret = self.machine_manager[machine_id].doable_ops_id
             else:
-                raise RuntimeWarning("访问不可用的机器 {}. 返回值为 None".format(machine_id))
+                raise RuntimeWarning("Access to unavailable machines {}. The return value is None".format(machine_id))
         return ret
 
     def get_doable_ops_in_list(self, machine_id=None, shuffle_machine=True):
@@ -228,14 +228,14 @@ class GNN_agent(Basic_Agent):
     @classmethod
     def from_path(self,cls, jssp_path, **kwargs):
         """
-        从文件路径创建NodeProcessingTimeSimulator对象的方法
+        Methods for creating a NodeProcessingTimeSimulator object from a file path
 
-        参数：
-        jssp_path: str，JSSP数据文件的路径
-        kwargs: dict，其他参数
+        parameters：
+        jssp_path: str，Path to the JSSP data file
+        kwargs: dict，Other parameters
 
-        返回：
-        NodeProcessingTimeSimulator对象
+        return：
+        NodeProcessingTimeSimulator object
         """
         with open(jssp_path) as f:
             ms = []  # machines
@@ -294,7 +294,7 @@ class GNN_agent(Basic_Agent):
 
 class JobManager:
     """
-    作业管理器
+    job manager
     """
 
     def __init__(self, config,
@@ -399,7 +399,7 @@ class JobManager:
 
 class Job:
     """
-    作业
+    job
     """
 
     def __init__(self, job_id, machine_order, processing_time_order, embedding_dim,config):
@@ -565,7 +565,7 @@ class Operation:
 
 class NodeProcessingTimeJobManager(JobManager):
     """
-    以节点处理时间为准的作业管理器
+    Job manager based on node processing time
     """
     def __init__(self, config,machine_matrix, processing_time_matrix, embedding_dim=16, use_surrogate_index=True):
         super().__init__(config,machine_matrix, processing_time_matrix, embedding_dim, use_surrogate_index)
@@ -691,7 +691,7 @@ class NodeProcessingTimeJob(Job):
 
 class DummyOperation:
     """
-    哑元运算
+    dummy variables
     """
 
     def __init__(self,

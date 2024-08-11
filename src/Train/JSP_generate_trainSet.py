@@ -29,7 +29,7 @@ def override(fn):
 
 
 if __name__ == '__main__':
-    size = 100 #算例的个数
+    size = 100 #Number of examples
     folder_path = 'JSP_learning_train'
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)

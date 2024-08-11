@@ -12,7 +12,7 @@ class LPT(Basic_Rule):
         n_Job = len(dataset[0])
         m_Machine = len(dataset[0][0])
         for i in range(m_Machine):
-            # 获取当前列的所有元素
+            # Get all elements in the current column
             current_col = [(row_idx, dataset[0][row_idx][i]) for row_idx in range(n_Job)]
             current_col_sorted = sorted(current_col, key=lambda x: x[1], reverse=True)
             Sequence.extend([x[0] for x in current_col_sorted])

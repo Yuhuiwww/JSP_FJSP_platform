@@ -81,7 +81,7 @@ class FJSPModel:
         model.optimize()
         end_time = time.time()
         solve_time = end_time - start_time
-        print("求解时间: {:.2f} 秒".format(solve_time))
+        print("solution time: {:.2f} s".format(solve_time))
         if model.status == GRB.OPTIMAL:
             obj_wal = model.objVal
             print('Optimal objective: %g' % model.objVal)

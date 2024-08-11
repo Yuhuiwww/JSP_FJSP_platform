@@ -516,15 +516,15 @@ class PPO:
                                                          gamma=decay_ratio)
         self.V_loss_2 = nn.MSELoss()
 
-    # 定义一个方法update，该方法用于更新策略网络参数，输入参数为memories（存储了环境信息的数据结构列表）、n_tasks（任务数量）和g_pool（全局图池）
-
+    # Define a method, update, which is used to update the policy network parameters with input parameters memories (a list of data structures that store information about the environment),
+    # n_tasks (the number of tasks), and g_pool (the global graph pool)
     def update(self, memories, n_tasks, g_pool):
-        # 从配置中获取损失函数的系数
-        vloss_coef = self.config.vloss_coef  # 价值函数损失的系数
-        ploss_coef = self.config.ploss_coef  # 策略损失的系数
-        entloss_coef = self.config.entloss_coef  # 熵损失的系数
+        # Getting the coefficients of the loss function from the configuration
+        vloss_coef = self.config.vloss_coef  # Coefficient of loss of value function
+        ploss_coef = self.config.ploss_coef  # Coefficient of loss of strategy
+        entloss_coef = self.config.entloss_coef  # Coefficient of entropy loss
 
-        # 初始化存储所有环境数据的列表
+        # Initialize a list storing all environmental data
         rewards_all_env = []
         adj_mb_t_all_env = []
         fea_mb_t_all_env = []
@@ -533,9 +533,9 @@ class PPO:
         a_mb_t_all_env = []
         old_logprobs_mb_t_all_env = []
 
-        # 遍历所有环境，处理并存储每个环境中的数据
+        # Iterate through all environments, process and store data in each environment
         for i in range(len(memories)):
-            # 计算每个环境的折扣累积奖励
+            # Calculate the cumulative rewards of discounts for each environment
             rewards = []
             discounted_reward = 0
             for reward, is_terminal in zip(reversed(memories[i].r_mb), reversed(memories[i].done_mb)):
@@ -544,32 +544,32 @@ class PPO:
                 discounted_reward = reward + (self.gamma * discounted_reward)
                 rewards.insert(0, discounted_reward)
 
-            # 将奖励转换为PyTorch张量，并进行标准化
+            # Converting rewards to PyTorch tensor with normalization
             rewards = torch.tensor(rewards, dtype=torch.float).to(device)
             rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-5)
             rewards_all_env.append(rewards)
 
-            # 处理每个环境的观测、特征、候选节点、掩码和动作等信息
+            # Processing of observations, features, candidate nodes, masks and actions for each environment
             adj_mb_t_all_env.append(aggr_obs(torch.stack(memories[i].adj_mb).to(device), n_tasks))
             fea_mb_t = torch.stack(memories[i].fea_mb).to(device)
-            fea_mb_t = fea_mb_t.reshape(-1, fea_mb_t.size(-1))  # 调整特征维度
+            fea_mb_t = fea_mb_t.reshape(-1, fea_mb_t.size(-1))  # Adjustment of feature dimensions
             fea_mb_t_all_env.append(fea_mb_t)
             candidate_mb_t_all_env.append(torch.stack(memories[i].candidate_mb).to(device).squeeze())
             mask_mb_t_all_env.append(torch.stack(memories[i].mask_mb).to(device).squeeze())
             a_mb_t_all_env.append(torch.stack(memories[i].a_mb).to(device).squeeze())
             old_logprobs_mb_t_all_env.append(torch.stack(memories[i].logprobs).to(device).squeeze().detach())
 
-        # 计算全局图池mb_g_pool，它对所有环境都相同
+        # Compute the global graph pool mb_g_pool, which is the same for all environments
         mb_g_pool = g_pool_cal(g_pool, torch.stack(memories[0].adj_mb).to(device).shape, n_tasks, device)
 
-        # 对策略进行K轮优化迭代
+        # Perform K rounds of optimization iterations on the strategy
         for _ in range(self.k_epochs):
             loss_sum = 0
             vloss_sum = 0
 
-            # 遍历所有环境进行训练
+            # Traverse all environments for training
             for i in range(len(memories)):
-                # 使用当前策略网络计算输出概率分布 pis 和状态值 vals
+                # Use the current policy network to compute the output probability distribution pis and state values vals
                 pis, vals = self.policy(x=fea_mb_t_all_env[i],
                                         graph_pool=mb_g_pool,
                                         adj=adj_mb_t_all_env[i],
@@ -577,50 +577,50 @@ class PPO:
                                         mask=mask_mb_t_all_env[i],
                                         padded_nei=None)
 
-                # 计算对数概率和熵损失
+                # Calculating log probability and entropy loss
                 logprobs, ent_loss = eval_actions(pis.squeeze(), a_mb_t_all_env[i])
 
-                # 计算优势比
+                # Computational Advantage Ratio
                 ratios = torch.exp(logprobs - old_logprobs_mb_t_all_env[i].detach())
 
-                # 计算优势值
+                # Calculation of dominance value
                 advantages = rewards_all_env[i] - vals.view(-1).detach()
 
-                # 计算两个不同的策略损失项 surr1 和 surr2
+                # Compute two different strategy loss terms surr1 and surr2
                 surr1 = ratios * advantages
                 surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip) * advantages
 
-                # 计算价值函数损失
+                # Calculate loss of value function
                 v_loss = self.V_loss_2(vals.squeeze(), rewards_all_env[i])
 
-                # 计算策略损失
+                # Calculating Strategy Losses
                 p_loss = - torch.min(surr1, surr2).mean()
 
-                # 确定熵损失
+                # Determining entropy loss
                 ent_loss = - ent_loss.clone()
 
-                # 组合总损失
+                # Total portfolio loss
                 loss = vloss_coef * v_loss + ploss_coef * p_loss + entloss_coef * ent_loss
 
-                # 更新累计损失
+                # Updating cumulative losses
                 loss_sum += loss
                 vloss_sum += v_loss
 
-            # 反向传播计算梯度
-            self.optimizer.zero_grad()  # 清零梯度
-            loss_sum.mean().backward()  # 计算平均损失的梯度
+            # Backpropagation computes the gradient
+            self.optimizer.zero_grad()  # Clearing the gradient
+            loss_sum.mean().backward()  # Calculate the gradient of the average loss
 
-            # 更新模型参数
+            # Updating Model Parameters
             self.optimizer.step()
 
-        # 将新策略权重复制到旧策略网络中
+        # Copying new policy weights to the old policy network
         self.policy_old.load_state_dict(self.policy.state_dict())
 
-        # 如果配置要求衰减学习率，则执行学习率调度器的step操作
+        # If the configuration calls for decaying the learning rate, perform the STEP operation of the learning rate scheduler
         if self.config.decayflag:
             self.scheduler.step()
 
-        # 返回本次更新过程中的平均总损失和平均价值损失
+        # Returns the average total loss and average value loss during this renewal process
         return loss_sum.mean().item(), vloss_sum.mean().item()
 
 
@@ -662,7 +662,7 @@ class L2D_optimizer(Basic_learning_algorithm):
     #                   config.decay_step_size,
     #                   config.decay_ratio,
     #                   config)
-    #         # 获取同一级文件夹的路径
+    #         # Get the path to the same level folder
     #         current_dir = os.path.dirname(os.path.abspath(__file__))
     #         folder_path = os.path.join(current_dir, 'SavedNetwork')
     #         path = folder_path + '/' + config.test_datas_type + '{}.pth'.format(str(N_JOBS_N) + 'x' + str(N_MACHINES_N))
@@ -737,7 +737,7 @@ class L2D_optimizer(Basic_learning_algorithm):
                   config.decay_step_size,
                   config.decay_ratio,
                   config)
-        # 获取同一级文件夹的路径
+        # Get the path to the same level folder
 
         folder_path = 'Train/model_/JSP/L2D'
         # folder_path = os.path.join(current_dir, 'L2D')

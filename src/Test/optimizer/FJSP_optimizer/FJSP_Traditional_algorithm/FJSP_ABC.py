@@ -134,7 +134,7 @@ class FJSP_ABC(FJSP_Basic_algorithm):
 
         if pos1 > pos2:
             pos1, pos2 = pos2, pos1
-        #将Pos位置的元素放到pos1位置，pos1 及其后面的元素后移
+        #Put the element at position Pos at position pos1, and move back the elements at pos1 and beyond.
         p.insert(pos1, p.pop(pos2))
         return p
 
@@ -319,7 +319,7 @@ class FJSP_ABC(FJSP_Basic_algorithm):
                         break
                 if best_minfiness > min_makespan:
                     best_minfiness = min_makespan
-                print('最小完工时间',min_makespan)
+                print('Minimum Completion Time',min_makespan)
                 f.write(str(min_makespan) + '\n')
         return best_minfiness
 

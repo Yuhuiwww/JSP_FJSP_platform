@@ -7,17 +7,17 @@ class Jaya(Basic_Algorithm):
     def __init__(self, config):
         self.config = config
         self.population_size = 100
-        self.global_best=[]#全局最优解
-        self.global_best_fit = 100000  # 全局最优解
+        self.global_best=[]#global optimum solution (GOS)
+        self.global_best_fit = 100000  # global optimum solution (GOS)
         self.worst_fit = 0
-        self.global_worst=[]#最差
+        self.global_worst=[]#the worst
         self.best_number=0
         self.worst_number=0
 
 
     def generate_init_pop(self,population_size, j, m):
         population_list = np.zeros((population_size, int(j * m)), dtype=np.int32)
-        indivudial=np.zeros(j*m)#创建一个大小为 j * m 的零数组
+        indivudial=np.zeros(j*m)#Create an array of zeros of size j * m
         strat=0
         for i in range(j):
             indivudial[strat:strat+m]=i
@@ -27,64 +27,64 @@ class Jaya(Basic_Algorithm):
             population_list[i]=indivudial
         return population_list
     def far_close_process(self,population_list,m_job):
-        #挑选一个个体，按一定的概率继承best，按一定的概率，远离worst
+        #Pick an individual who, with a certain probability, inherits the BEST and, with a certain probability, stays away from the WORST
         best_Individual=self.global_best
         worst_Individual=self.global_worst
         new_pop = []
         for num1,individual in enumerate(population_list):
             copy=individual.copy()
-            if 0.8 >= 0.5:  # 进行远离操作,远离概率0.5
+            if 0.8 >= 0.5:  # Perform a stay away operation with a probability of stay away of 0.5.
                 all_list = []
-                out_list = []  # 弹出相同任务位置的下标
-                for num, i in enumerate(worst_Individual):  # 找出相同与不同
+                out_list = []  # Popup subscripts for the same task location
+                for num, i in enumerate(worst_Individual):  # Find similarities and differences
                     all_list.append(num)
                     if individual[num] == i:
-                        out_list.append(num)  # 与最差的DNA在同一个位置的任务分配相同，远离它要和它不一样
-                back_up_list = [i for i in all_list if i not in out_list]  # 备选集，指的是与最差DNA的排序位置不同的任务下标。
-                if len(out_list) <= len(back_up_list):  # 不同位置多于相同位置时
+                        out_list.append(num)  # Same tasking as the worst DNA in the same location, away from it to be different from it
+                back_up_list = [i for i in all_list if i not in out_list]  # Alternative sets, which refer to task subscripts that are different from the sort position of the worst DNA.
+                if len(out_list) <= len(back_up_list):  # When there are more different positions than the same position
                     while len(out_list) > 0:
                         exchange1 = out_list.pop()
                         exchange2 = random.choice(back_up_list)
                         back_up_list.remove(exchange2)
-                        temp = copy[exchange1]  # 根据下标，获取具体的交换点
+                        temp = copy[exchange1]  # Get specific exchange points based on subscripts
                         copy[exchange1] = individual[exchange2]  #
                         copy[exchange2] = temp
                 else:  #
-                    if len(out_list) == len(all_list):  # 遍历到最差值，直接跳过就好:
+                    if len(out_list) == len(all_list):  # Iterate to the worst value and just skip over it:
                         continue
                     else:
                         while len(out_list) > 1:
                             exchange1 = out_list.pop()
                             exchange2 = out_list.pop()
-                            temp = copy[exchange1]  # 交换点
+                            temp = copy[exchange1]  # exchange point
                             copy[exchange1] = individual[exchange2]
                             copy[exchange2] = temp
                         if len(out_list) == 1:
                             exchange1 = out_list.pop()
                             exchange2 = random.choice(back_up_list)
                             back_up_list.remove(exchange2)
-                            temp = copy[exchange1]  # 交换点
+                            temp = copy[exchange1]  # exchange point
                             copy[exchange1] = individual[exchange2]
                             copy[exchange2] = temp
                         else:
                             pass
-                            # print('交换完毕')
+                            # print('end of exchange')
             indivial = copy
-                # 靠近操作
-            if 0.9 >= 0.5:  # print('发生靠近')
+                # Proximity operation
+            if 0.9 >= 0.5:  # print('come close')
                 select_list = []
-                for selet in range(m_job):  # 按0.4概率选择接近点
+                for selet in range(m_job):  # Selection of proximity points with 0.4 probability
                     if random.random() > 0.4:
-                        select_list.append(selet)  # 被选中分配位置和最佳DNA一样的任务点
+                        select_list.append(selet)  # Mission points selected for assignment in the same location as the best DNA
                 current_list=[]
-                for i in select_list:  # 靠近best点
-                    index_select = np.where(i== best_Individual)[0] # 靠近时，替换值原本在哪个位置
-                    #将值为i的从indivial中删除
+                for i in select_list:  # Close to the best point.
+                    index_select = np.where(i== best_Individual)[0] # Where the replacement value was originally located when it was close
+                    #Remove the value of i from the indivial
                     individual = individual[individual != i]
                     for j, index in enumerate(index_select):
                         individual = np.insert(individual, index, i)
 
-            individual=indivial  # 要为indivial前面加上0
+            individual=indivial  # To prepend 0 to indivial
             population_list[num1]=individual
             return population_list
 

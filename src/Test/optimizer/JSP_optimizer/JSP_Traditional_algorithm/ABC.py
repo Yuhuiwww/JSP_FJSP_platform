@@ -30,7 +30,7 @@ class ABC(Basic_Algorithm):
 
         return population_list
     def empoyed_bees(self, config, individual):
-        self.n_dim = config.Pn_j * config.Pn_m  # 搜索空间维度
+        self.n_dim = config.Pn_j * config.Pn_m  # Searching for spatial dimensions
         # init_solution = self.initJobSequence(config)
         for j in range(self.n_dim):
             individual[j] = individual[j] % config.Pn_j  # convert to job number format, every job appears m times

@@ -174,7 +174,7 @@ if __name__ == '__main__':
     M = [10,10, 15, 10, 15]
     prefer = [('vali', 5)]
     count = 0
-    # 循环prefer
+    # Loop prefer
     for i in range(len(prefer)):
         name, times = prefer[i]
         for j in range(times):
@@ -188,4 +188,4 @@ if __name__ == '__main__':
             for i in range(len(data)):
                 agent.train(data[i])
         count += times
-    print('结束111111111111111111111111111111111111111')
+    print('END111111111111111111111111111111111111111')

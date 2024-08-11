@@ -134,7 +134,7 @@ class FJSP_DAN_agent(Basic_FJSP_agent):
         self.number_of_machines = op_pt_list[0].shape[1]
         self.number_of_jobs = job_length_list[0].shape[0]
 
-        # 异工序数环境并行化
+        # Parallelization of heterogeneous process number environments
         self.env_number_of_ops = np.array([op_pt_list[k].shape[0] for k in range(self.number_of_envs)])
         self.max_number_of_ops = np.max(self.env_number_of_ops)
 
@@ -628,7 +628,7 @@ class FJSPEnvForVariousOpNums:
         self.number_of_machines = op_pt_list[0].shape[1]
         self.number_of_jobs = job_length_list[0].shape[0]
 
-        # 异工序数环境并行化
+        # Parallelization of heterogeneous process number environments
         self.env_number_of_ops = np.array([op_pt_list[k].shape[0] for k in range(self.number_of_envs)])
         self.max_number_of_ops = np.max(self.env_number_of_ops)
 

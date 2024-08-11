@@ -213,7 +213,7 @@ class L2D_agent(Basic_Agent):
     def putInTheEnd(self,a, jobRdyTime_a, mchRdyTime_a, startTimesForMchOfa, opsIDsForMchOfa):
         idx = np.where(startTimesForMchOfa == -self.configs.high)
         if len(idx[0]) == 0:
-            print("没有满足条件的索引")
+            print("no indexes that satisfy the condition")
         index = np.where(startTimesForMchOfa == -self.configs.high)[0][0]
         startTime_a = max(jobRdyTime_a, mchRdyTime_a)
         startTimesForMchOfa[index] = startTime_a

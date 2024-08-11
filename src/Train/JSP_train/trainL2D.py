@@ -160,7 +160,7 @@ if __name__ == '__main__':
     M = [6, 5, 10, 5, 10]
     prefer = [('SL', 5)]
     count = 0
-    # 循环prefer
+    # Loop prefer
     for i in range(len(prefer)):
         name, times = prefer[i]
         for j in range(times):

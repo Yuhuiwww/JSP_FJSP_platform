@@ -9,15 +9,15 @@ from Test.optimizer.JSP_optimizer.JSP_Traditional_algorithm.Bassic_algorithm imp
 class PSO(Basic_Algorithm):
     def __init__(self, config):
        self.config = config
-       self.w = 0.8  # 惯性因子
-       self.c1 = 0.1  # 局部速度因子
-       self.c2 = 0.1  # 全局速度因子
-       self.particals = 100  # 粒子群的数量
-       self.cycle_ = 30  # 迭代次数
-       self.mesh_div = 10  # 网格等分数量
-       self.thresh = 300  # 外部存档阀值
-       self.min_ = np.array([0, 0])  # 粒子坐标的最小值
-       self.max_ = np.array([10, 10])  # 粒子坐标的最大值
+       self.w = 0.8  # Inertia Weight
+       self.c1 = 0.1  # Cognitive Weight
+       self.c2 = 0.1  # Social Weight
+       self.particals = 100  # Swarm Size
+       self.cycle_ = 30  # Number of Iterations
+       self.mesh_div = 10  # Number of Grid Divisions
+       self.thresh = 300  # External Archiving Threshold
+       self.min_ = np.array([0, 0])  # Minimum Particle Coordinate Value
+       self.max_ = np.array([10, 10])  # Maximum Particle Coordinate Value
        self.num_iteration=1000
        self.mutation_rate = 0.1
 

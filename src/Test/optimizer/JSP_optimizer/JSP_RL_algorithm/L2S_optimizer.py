@@ -18,7 +18,7 @@ from Test.optimizer.JSP_optimizer.JSP_RL_algorithm.Basic_learning_algorithm impo
 
 # config = get_config()
 # device = torch.device(config.device)
-"该函数是一个自定义的图神经网络层，包含两个GATConv模块，分别处理节点的特征和标签。在前向传播过程中，对输入的节点特征进行处理和组合，最后返回处理后的节点特征"
+"The function is a customized graph neural network layer containing two GATConv modules that process the features and labels of the nodes, respectively. During forward propagation, the input node features are processed and combined, and finally the processed node features are returned"
 class DGHANlayer(torch.nn.Module):
     def __init__(self, in_chnl, out_chnl, dropout, concat, heads=2):
         super(DGHANlayer, self).__init__()
@@ -31,7 +31,7 @@ class DGHANlayer(torch.nn.Module):
         node_h_mc = F.elu(self.mchgrp_conv(F.dropout(node_h, p=self.dropout, training=self.training), edge_index_mc))
         node_h = torch.mean(torch.stack([node_h_pc, node_h_mc]), dim=0, keepdim=False)
         return node_h
-"该函数是一个用于构建DGHAN模型的类。DGHAN模型是一种用于处理图数据的神经网络模型。"
+"This function is a class for constructing a DGHAN model, a neural network model for processing graph data."
 class DGHAN(torch.nn.Module):
     def __init__(self, in_dim, hidden_dim, dropout, layer_dghan=4, heads=2):
         super(DGHAN, self).__init__()
@@ -62,7 +62,7 @@ class DGHAN(torch.nn.Module):
             h_node = self.DGHAN_layers[layer](h_node, edge_index_pc, edge_index_mc)
 
         return h_node, torch.mean(h_node.reshape(batch_size, -1, self.hidden_dim), dim=1)
-"这是一个用于图表示学习的模型类，使用了Gated Graph Neural Network (GGNN) 的变种，称为Graph Isomorphism Network (GIN)。该类包含初始化函数和前向传播函数。初始化函数创建一系列GIN卷积层，并将其存储在一个模块列表中。前向传播函数通过应用一系列GIN卷积层来生成节点表示和全局池化表示。"
+"This is a model class for graph representation learning that uses a variant of Gated Graph Neural Network (GGNN) called Graph Isomorphism Network (GIN). The class contains an initialization function and a forward propagation function. The initialization function creates a series of GIN convolutional layers and stores them in a list of modules. The forward propagation function generates a node representation and a global pooled representation by applying a series of GIN convolutional layers."
 class GIN(torch.nn.Module):
     def __init__(self, in_dim, hidden_dim, layer_gin=4):
         super(GIN, self).__init__()
@@ -118,7 +118,7 @@ class GIN(torch.nn.Module):
             gPool_over_layer += g_pool
 
         return node_pool_over_layer, gPool_over_layer
-"该代码是一个Actor类，用于生成策略网络"
+"The code is an Actor class for generating policy networks"
 class Actor(nn.Module):
     def __init__(self,
                  in_dim,
@@ -267,7 +267,7 @@ def find_nearest_file(directory, target_file):
         finded_file.append((filename, abs(num)))
 
     # if len(finded_file)==0:
-    #     print(directory+"路径下没有找到匹配"+target_file_type+'的文件！！！！！！！')
+    #     print(directory+"No files matching '+target_file_type+' were found under paths！！！！！！！')
     #     sys.exit()
     min_distance_entry = min(finded_file, key=lambda x: x[1])
     (min_filename, min_num) = min_distance_entry

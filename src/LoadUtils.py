@@ -3,12 +3,12 @@ import os
 import re
 from torch.distributions.categorical import Categorical
 import sys
-# 加载数据
+# Load data
 def load_data(config):
-    N_JOBS_P = config.Pn_j  # 工件的数量
-    N_MACHINES_P = config.Pn_m  # 机床的数量
+    N_JOBS_P = config.Pn_j  # Number of workpieces
+    N_MACHINES_P = config.Pn_m  # Number of machines
     TEST_DATA =config.test_datas+config.test_datas_type
-    # 加载数据
+    # Load data
     dataLoaded = np.load(str(TEST_DATA) +str(N_JOBS_P) + 'x' + str(N_MACHINES_P) + '.npy')
     dataset = []
     #
@@ -24,7 +24,7 @@ def FJSP_load_gurobi(file):
     sdsts = {}
     numonJobs = []
     total_op_nr = 0
-    # 加载数据
+    # Load data
     with open(file, 'r') as f:
         # Extract header data
         number_operations, number_machines, _ = map(float, f.readline().split())
@@ -79,10 +79,10 @@ def FJSP_load_gurobi(file):
 
 def load_dataDAN(config):
     TEST_DATA = config.test_datas +'/'
-    N_JOBS_P = config.Pn_j  # 工件的数量
-    N_MACHINES_P = config.Pn_m  # 机床的数量
+    N_JOBS_P = config.Pn_j  # Number of workpieces
+    N_MACHINES_P = config.Pn_m  # Number of machines
 
-    # 路径problem/FJSP_test_datas/SD1/10x5
+    # Path problem/FJSP_test_datas/SD1/10x5
     filesPath = [str(TEST_DATA) +'/'+config.test_datas_type+'/'+ str(N_JOBS_P) + 'x' + str(N_MACHINES_P)]
     data_list = []
     for data_name in filesPath:
@@ -91,7 +91,7 @@ def load_dataDAN(config):
     config.num_ins = len(data_list[0][0][0])
     return data_list,config
 
-# 查找最近的文件
+# Find Recent Documents
 # def find_nearest_file(directory, target_file_type, target_file):
 #     files = os.listdir(directory)
 #     files.sort()
@@ -110,7 +110,7 @@ def load_dataDAN(config):
 #                 return filename
 #             finded_file.append((filename, abs(num)))
 #     if len(finded_file)==0:
-#         print(directory+"路径下没有找到匹配"+target_file_type+'的文件！！！！！！！')
+#         print(directory+"No matches found under path"+target_file_type+'documents！！！！！！！')
 #         sys.exit()
 #     min_distance_entry = min(finded_file, key=lambda x: x[1])
 #     (min_filename, min_num) = min_distance_entry
@@ -132,7 +132,7 @@ def find_nearest_file(directory, target_file):
             return filename
         finded_file.append((filename, abs(num)))
     # if len(finded_file)==0:
-    #     print(directory+"路径下没有找到匹配"+target_file_type+'的文件！！！！！！！')
+    #     print(directory+"No matches found under path"+target_file_type+'documents！！！！！！！')
     #     sys.exit()
     min_distance_entry = min(finded_file, key=lambda x: x[1])
     (min_filename, min_num) = min_distance_entry

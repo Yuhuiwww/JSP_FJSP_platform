@@ -115,7 +115,7 @@ class GA(Basic_Algorithm):
                         if job_count[m] == 0:
                             break
 
-    #对childlist变异
+    #For childlist mutations
     def mutation(self, childlist, num_mutation_jobs, mutation_rate, dataset, config):
         current_childlist = copy.deepcopy(childlist)
         p_t, m_seq = dataset[0], dataset[1]
@@ -129,7 +129,7 @@ class GA(Basic_Algorithm):
 
                 chromosome[mutationpoints[0]] = chrom_copy[mutationpoints[-1]]
         makespan_list = np.zeros(len(childlist))
-        # 配置problem_name选择问题
+        # Configuring problem_name selection issues
         problem = eval(config.problem_name)(copy.deepcopy(config.Pn_j), copy.deepcopy(config.Pn_m))
         for i, chromosome in enumerate(childlist):
             makespan_list[i] = problem.cal_objective(chromosome, dataset)

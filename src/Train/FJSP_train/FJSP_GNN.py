@@ -770,7 +770,7 @@ if __name__ == '__main__':
     # M = [10, 10]
     # bach = [100, 100]
     count=0
-    # 循环prefer
+    # Loop prefer
     for j in range(len(N)):
         print('start---',  N[j + count], 'X', M[j + count])
         config = get_FJSPconfig()

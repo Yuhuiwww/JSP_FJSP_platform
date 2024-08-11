@@ -5,8 +5,8 @@
 #         self.num_machines = num_machines
 #
 #     def objective_function(self, solution):
-#         # 这里可以根据具体的 FJSP 问题定义目标函数
-#         # 这里只是一个简单的示例，随机生成一个目标值
+# # Here you can define the objective function according to the specific FJSP problem.
+# # Here is just a simple example of generating a randomized target value
 #         return np.random.rand()
 # class ABCAlgorithm:
 #     def __init__(self, problem, num_iterations, num_employed_bees, num_onlooker_bees, max_trials):
@@ -21,7 +21,7 @@
 #     def initialize_solutions(self):
 #         solutions = []
 #         for _ in range(self.num_employed_bees + self.num_onlooker_bees):
-#             # 初始化蜜蜂位置（解决方案）
+# # Initialize bee location (solution)
 #             solution = np.random.randint(low=0, high=self.problem.num_machines, size=self.problem.num_jobs)
 #             solutions.append(solution)
 #         return solutions
@@ -31,17 +31,17 @@
 #             solution = solutions[i]
 #             fitness = self.problem.objective_function(solution)
 #
-#             # 在邻域内搜索新的解决方案
+#             # Search for new solutions in the neighborhood
 #             for _ in range(self.max_trials):
 #                 new_solution = self.get_neighboring_solution(solution)
 #                 new_fitness = self.problem.objective_function(new_solution)
 #
-#                 # 如果新的解决方案更优，更新当前解决方案
+#                 # Update the current solution if the new solution is better
 #                 if new_fitness < fitness:
 #                     solution = new_solution
 #                     fitness = new_fitness
 #
-#             # 更新解决方案和适应度
+#             # Updating solutions and adaptations
 #             solutions[i] = solution
 #
 #     def onlooker_bee_phase(self, solutions):
@@ -53,17 +53,17 @@
 #                 solution = solutions[i]
 #                 fitness = self.problem.objective_function(solution)
 #
-#                 # 在邻域内搜索新的解决方案
+#                 # Search for new solutions in the neighborhood
 #                 for _ in range(self.max_trials):
 #                     new_solution = self.get_neighboring_solution(solution)
 #                     new_fitness = self.problem.objective_function(new_solution)
 #
-#                     # 如果新的解决方案更优，更新当前解决方案
+#                     # Update the current solution if the new solution is better
 #                     if new_fitness < fitness:
 #                         solution = new_solution
 #                         fitness = new_fitness
 #
-#                 # 更新解决方案和适应度
+#                 # Updating solutions and adaptations
 #                 solutions[i] = solution
 #                 num_selected_solutions += 1
 #             i = (i + 1) % (self.num_employed_bees + self.num_onlooker_bees)
@@ -75,9 +75,9 @@
 #         return probabilities
 #
 #     def get_neighboring_solution(self, solution):
-#         # 在邻域内生成新的解决方案
+#         # Generating new solutions in the neighborhood
 #         new_solution = np.copy(solution)
-#         # 这里可以根据具体问题的邻域定义进行相应的变换操作
+#         # Here the corresponding transformation operations can be performed according to the neighborhood definition of the specific problem
 #         random_index = np.random.randint(low=0, high=self.problem.num_jobs)
 #         new_solution[random_index] = np.random.randint(low=0, high=self.problem.num_machines)
 #         return new_solution
@@ -89,7 +89,7 @@
 #             self.employed_bee_phase(solutions)
 #             self.onlooker_bee_phase(solutions)
 #
-#             # 更新全局最优解
+#             # Updating the global optimal solution
 #             best_index = np.argmin([self.problem.objective_function(sol) for sol in solutions])
 #             if self.best_solution is None or self.problem.objective_function(solutions[best_index]) < self.best_fitness:
 #                 self.best_solution = np.copy(solutions[best_index])
@@ -97,10 +97,10 @@
 #
 #         return self.best_solution, self.best_fitness
 #
-# # 创建 FJSP 问题实例
+# # Creating FJSP Problem Examples
 # fjsp_problem = FJSPProblem(num_jobs=5, num_machines=3)
 #
-# # 创建 ABC 算法实例并运行
+# # Create an instance of the ABC algorithm and run it
 # abc_algorithm = ABCAlgorithm(problem=fjsp_problem, num_iterations=100, num_employed_bees=20, num_onlooker_bees=20, max_trials=10)
 # best_solution, best_fitness = abc_algorithm.search()
 # print("Best Solution:", best_solution)

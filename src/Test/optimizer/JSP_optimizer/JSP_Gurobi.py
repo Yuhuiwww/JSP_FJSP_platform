@@ -33,23 +33,23 @@ class JSPModel:
             model.setObjective(Cmax, GRB.MINIMIZE)
             # Add constraints
             # Equation (3), means that each step can be taken only after the precedent step finished
-            for i in range(self.n):  # 工件i
-                for h in range(self.m):  # h是操作  self.job_seqs[i][h] 表示机床
+            for i in range(self.n):  # Workpiece i
+                for h in range(self.m):  # h is the operation self.job_seqs[i][h] represents the machine tool
                     model.addConstr(X[i, self.job_seqs[i][h]] >= 0)
 
-            for j in range(self.m):  # 工件i
+            for j in range(self.m):  # Workpiece i
                 for k in range(self.n):
                     for i in range(self.n):
                         if i != k:
                             model.addConstr(Z[k, i, j] + Z[i, k, j] <= 1)
 
             V = 100000
-            # # for i in range(self.n):  # 工件i
+            # # for i in range(self.n):  # Workpiece i
             # #         model.addConstr(
             # #             X[i][self.job_seqs[i][0]] >= X[k][self.job_seqs[i][0]] + self.production_time[k][self.job_seqs[i][0]] - V * Z[k][i][self.job_seqs[i][0]])
             # # Equation (4) and (5), means that no two jobs can be scheduled on the same machine at the same time
             #  # Set to a very big number
-            for k in range(self.n):  # i是后一个工件，K是前一个工件
+            for k in range(self.n):  # i is the latter workpiece, K is the former workpiece
                 for i in range(self.n):
                     for j in range(self.m):
                         for h in range(len(self.production_time[k])):
@@ -58,7 +58,7 @@ class JSPModel:
                                 model.addConstr(
                                     X[k, j] >= X[i, j] + self.production_time[i][desired_h] - V * (Z[k, i, j]))
 
-            for k in range(self.n):  # i是后一个工件，K是前一个工件
+            for k in range(self.n):  # i is the latter workpiece, K is the former workpiece
                 for i in range(self.n):
                     for j in range(self.m):
                         for h in range(len(self.production_time[k])):
@@ -69,8 +69,8 @@ class JSPModel:
 
             # # Equation (6), ensure Cmax is the latest job finish time
 
-            for i in range(self.n):  # 工件i
-                for h in range(1, self.m):  # h是操作
+            for i in range(self.n):  #  Workpiece i
+                for h in range(1, self.m):  # h is the operation
                     model.addConstr(
                         X[i, self.job_seqs[i][h]] >= X[i, self.job_seqs[i][h - 1]] + self.production_time[i]
                         [h - 1])
@@ -83,7 +83,7 @@ class JSPModel:
 
             end_time = time.time()
             solve_time = end_time - start_time
-            print("求解时间: {:.2f} 秒".format(solve_time))
+            print("solution time: {:.2f} s".format(solve_time))
             if model.status == GRB.OPTIMAL:
                 obj_wal = model.objVal
                 print('Optimal objective: %g' % model.objVal)

@@ -56,9 +56,9 @@ class Input:
         self.Job_Num=self.config.Pn_j
         self.Mac_Num=self.config.Pn_m
 
-        # 数据调整
+        # Data adjustment
         del self.__lines[0]
-        #这里要少一个
+        #There's one less here.
 
         for i in range(len(self.__lines)-1):
 
@@ -72,7 +72,7 @@ class Input:
     def DataConversion(self):
 
         total_op = np.sum(self.job_op_num)
-        #加工时间矩阵p_table：总的工序数*m；其中不能进行加工用-1表示
+        #Processing time matrix p_table: total number of processes * m; where unavailability is denoted by -1
         p_table = np.ones((total_op,self.Mac_Num),dtype=int)*(-1)
         index =0
         for (i1,i2) in zip(self.__MAC_INFO,self.__PRO_INTO):
@@ -85,16 +85,16 @@ class Input:
 
 class Encode:
     def __init__(self,Pop_size,p_table,job_op_num):
-        #Pop_size为种群个数
-        self.GS_num = int(0.6 * Pop_size)  # 全局选择的个数
-        self.LS_num = int(0.2 * Pop_size)  # 局部选择的个数
-        self.RS_num = int(0.2 * Pop_size)  # 随机选择的个数
+        #Pop_size is the number of populations
+        self.GS_num = int(0.6 * Pop_size)  # Number of global Selections
+        self.LS_num = int(0.2 * Pop_size)  # Number of Local Selections
+        self.RS_num = int(0.2 * Pop_size)  # Number of Random Selection
         self.p_table = p_table
         self.half_chr = p_table.shape[0]
         self.job_op_num = job_op_num
         self.m = p_table.shape[1]
         self.n = len(job_op_num)
-    #得到初始有序的一维os
+    #Get the initial ordered one-dimensional os
     def order_os(self):
         order_os=[(index+1) for index,op in enumerate(self.job_op_num) for i in range(op)]
         # for index,op in enumerate(self.job_op_num):
@@ -104,92 +104,92 @@ class Encode:
         return order_os
     def random_selection(self):
         MS=np.empty((self.RS_num,self.half_chr),dtype=int)
-        #随机选择OS
+        #Random selection of OS
         OS = np.empty((self.RS_num, self.half_chr),dtype=int)
         order_os = self.order_os()[:]
-        # 随机选择MS
+        # Random selection of MS
         for episode in range(self.RS_num):
-            #打乱os的顺序
+            #Disrupting the order of os
             np.random.shuffle(order_os)
-            #随机选择os
+            #Random selection of os
             OS[episode]=order_os[:]
             for op_index,p in enumerate(self.p_table):
-                #找出该工件能够加工的机器的序号
+                #Determine the machine numbers that can process the workpiece
                 ava_m = [(index+1) for index in range(len(p)) if p[index]!=-1]
-                #随机选择,先这样写着
+                #Random selection. Let's start with this.
                 MS[episode][op_index]=np.random.choice(np.arange(len(ava_m)))+1
 
         chr = np.hstack((MS, OS))
         return chr
     def global_selection(self):
         MS = np.empty((self.GS_num, self.half_chr), dtype=int)
-        # 随机选择OS
+        # Random selection of OS
         OS = np.empty((self.GS_num, self.half_chr), dtype=int)
         order_os = self.order_os()[:]
-        # 随机选择MS
+        # Random selection of MS
         for episode in range(self.GS_num):
-            # 打乱os的顺序
+            # Disrupting the order of os
             np.random.shuffle(order_os)
-            # 随机选择os
+            # Random selection of os
             OS[episode] = order_os[:]
-            # 用于随机选择的工件集合
+            # Collection of artifacts for random selection
             job_list = [i for i in range(self.n)]
-            # 初始化值为0的长度为m的负荷数组
+            # Initialize an array of loads of length m with value 0
             M_load = np.zeros(self.m, dtype=int)
             for i in range(self.n):
-                #随机选择一个工件
+                #Randomly Select a Workpiece
                 job_num=np.random.choice(job_list)
-                #在这个工件的所有工序上进行遍历
+                #Iterate over all processes of this workpiece
                 for op in range(sum(self.job_op_num[:job_num]), sum(self.job_op_num[:job_num])+self.job_op_num[job_num]):
-                    #得到临时的机器负荷数组
+                    #Get a temporary array of machine loads
                     temp_load = np.array([pro + load for (pro, load) in zip(self.p_table[op], M_load) if pro != -1])
-                    #得到临时的机器负荷索引
+                    #Get a temporary machine load index
                     temp_index = [index for (index, pro) in enumerate(self.p_table[op]) if pro != -1]
-                    #选取临时的机器符合最小的索引
+                    #Pick the temporary machine that matches the smallest index
                     ava_min_index = np.argmin(temp_load)
-                    #将最小的索引+1放入MS中，即最好的可用的机器号,注意这里的下标是op,因为是随机找的工件
+                    #Put the smallest index +1 into the MS, that is, the best available machine number, note that the subscript here is op, because it is a random artifact find
                     MS[episode][op]=ava_min_index+1
-                    #更新机器负荷列表
+                    #Update machine load list
                     M_load[temp_index[ava_min_index]] = temp_load[ava_min_index]
-                #删除刚刚随机的工件号，继续随机进行
+                #Delete the artifact number just randomized and continue to randomize it
                 job_list.remove(job_num)
 
         chr = np.hstack((MS, OS))
         return chr
     def local_selection(self):
         MS = np.empty((self.LS_num, self.half_chr), dtype=int)
-        # 随机选择OS
+        # Random selection of OS
         OS = np.empty((self.LS_num, self.half_chr), dtype=int)
         order_os = self.order_os()[:]
-        # 随机选择MS
+        # Random selection of MS
         for episode in range(self.LS_num):
-            # 打乱os的顺序
+            # Disrupting the order of os
             np.random.shuffle(order_os)
-            # 随机选择os
+            # Random selection of os
             OS[episode] = order_os[:]
-            # 因为不能直接得到二维矩阵的列索引，这里手工设置一个
+            # Because it is not possible to get the column indices of the two-dimensional matrix directly, here a manual setup of a
             chr_index = 0
 
 
-            #依次遍历整个工件
+            #Iterating over the workpiece
             for i in range(self.n):
-                # 初始化值/重新置为0的长度为m的负荷数组
+                # Array of loads of length m with initialization value/reset to 0
                 M_load = np.zeros(self.m, dtype=int)
 
-                # 在这个工件的所有工序上进行遍历
+                # Iterate over all processes in this workpiece
                 for op in range(sum(self.job_op_num[:i]),
                                 sum(self.job_op_num[:i]) + self.job_op_num[i]):
-                    # 得到临时的机器负荷数组
+                    # Get a temporary array of machine loads
                     temp_load = np.array([pro + load for (pro, load) in zip(self.p_table[op], M_load) if pro != -1])
-                    # 得到临时的机器负荷索引
+                    # Get a temporary machine load index
                     temp_index = [index for (index, pro) in enumerate(self.p_table[op]) if pro != -1]
-                    # 选取临时的机器符合最小的索引
+                    # Pick the temporary machine that matches the smallest index
                     ava_min_index = np.argmin(temp_load)
-                    # 将最小的索引+1放入MS中，即最好的可用的机器号
+                    # Put the smallest index +1 into MS, the best available machine number
                     MS[episode][chr_index] = ava_min_index + 1
-                    # 列索引加1
+                    # Column index plus 1
                     chr_index += 1
-                    # 更新机器负荷列表
+                    # Update machine load list
                     M_load[temp_index[ava_min_index]] = temp_load[ava_min_index]
 
         chr = np.hstack((MS, OS))
@@ -248,17 +248,17 @@ class FJSP_PSO(FJSP_Basic_algorithm):
         input=Input(file,self.config)
         p_table, job_op_num = input.getMatrix()
         encode = Encode(self.Popsize, p_table, job_op_num)
-        # 全局选择的染色体
+        # Globally Selected Chromosome
         global_chrs = encode.global_selection()
-        # #局部选择的染色体
+        # Locally Selected Chromosome
         local_chrs = encode.local_selection()
-        # #随机选择的染色体
+        # Randomly Selected Chromosome
         random_chrs = encode.random_selection()
-        # 合并三者,得到初始的种群
+        # Combine the three to get the initial population.
         chrs = np.vstack((global_chrs, local_chrs, random_chrs))
 
-        # 得到初始的全局最优位置
-        # Decode.decode(chr,job_op_num,p_table,'decode')，其中的‘decode’表示不画图，只是计算适应度
+        # Get the initial global optimal position
+        # Decode.decode(chr,job_op_num,p_table,'decode')，where 'decode' means no drawing, just calculating the fitness
         return chrs,p_table,job_op_num
     def split_ms(self,pb_instance, ms):
         jobs = []
@@ -318,12 +318,12 @@ class FJSP_PSO(FJSP_Basic_algorithm):
             # print(type(indexes[job]))
 
 
-            # 确保 indexes[job] 是整数类型
+            #Ensure that indexes[job] is an integer type
             if isinstance(indexes[job], int):
                 index_machine = ms_s[job][indexes[job]]
             else:
-                # 处理 indexes[job] 不是整数的情况
-                print("indexes[job] 不是整数类型")
+                # Handling cases where indexes[job] is not an integer
+                print("indexes[job] is not an integer type")
             index_machine = ms_s[job][indexes[job]]
             machine = o[job][indexes[job]][index_machine]['machine']
             prcTime = o[job][indexes[job]][index_machine]['processingTime']
@@ -351,43 +351,43 @@ class FJSP_PSO(FJSP_Basic_algorithm):
         return chr
 
     def op_in_m(self,i, j, job_op_num):
-        # 求出这道工序在相应个机器上的位置，用job_op_num来求,
+        # Find the position of the process on the corresponding machine, using job_op_num.
         if i == 1:
             op_index = j - 1
         else:
-            # 切片是左闭右开
+            # The slices are left closed and right open
             op_index = sum(job_op_num[:i - 1]) + j - 1
         return op_index
     def f2_operator(self,n, half_chr, chr_Ek, single_best_chr, job_op_num):
-        # #由操作1得到的染色体
+        # Chromosomes obtained from operation 1
         # chr_Ek = f1_operator()
-        # 初始化工件编号列表
+        # Initialize the workpiece number list
         job_num_list = [i + 1 for i in range(n)]
-        # 打乱列表
+        # disrupt the list
         np.random.shuffle(job_num_list)
-        # 随机选择一个从1——n的数,保证任何一个集合不为空
+        # Randomly select a number from 1 to n, ensuring that no set is empty.
         index = np.random.randint(1, n)
-        # 得到工件集1和工件集2
+        # Get workpiece set 1 and workpiece set 2
         job_set1 = job_num_list[:index]
         job_set2 = job_num_list[index:]
-        # 分成ms和os两部分
+        # Both ms and os
         ms_Ek = chr_Ek[:half_chr]
         os_Ek = chr_Ek[half_chr:]
         ms_P = single_best_chr[:half_chr]
         os_P = single_best_chr[half_chr:]
-        # 子代的os和ms
+        # The os and ms of the child
         os_F = []
         ms_F = [0 for i in range(half_chr)]
-        # 遍历ms和os,
-        # 论文上画的图有大问题!!!!!不能简单的将os与ms对应起来，然后给ms赋值，
-        # 那样会导致比如某个工序本来最多可加工的机器个数为2，但是给它的染色体上的基因却为3了。
-        # 正确的理解是：将选中的比如工序O（1,2）在父代对应的ms的基因值赋值到子代的ms上O（1，2）的位置
+        # Iterate over ms and os.
+        #There is a big problem with the diagram drawn on the paper !!!!! Can't simply map os to ms and assign a value to ms.
+        # That would result in, for example, a process that had a maximum number of machines that could be processed of 2, but was given a chromosome with 3 genes on it.
+        # The correct understanding is that the gene value of the selected, say, process O(1,2) on the corresponding ms of the parent is assigned to the position O(1, 2) on the ms of the child
 
-        # 用来存工件出现过几次的字典，形式{1：2}表示工件1出现了2次
+        # is used to store a dictionary of how many times an artifact has appeared, of the form {1:2} which means that artifact 1 has appeared 2 times
         os_Ek_dict = {}
         os_P_dict = {}
         for os1, os2 in zip(os_Ek, os_P):
-            # 现在默认Ek的在前面
+            # Now the default Ek's come first
             if os1 in job_set1:
                 os_F.append(os1)
                 if os1 in os_Ek_dict:
@@ -407,15 +407,15 @@ class FJSP_PSO(FJSP_Basic_algorithm):
                 ms_F[op_index] = ms_P[op_index]
                 # ms_F.append(ms_P[os_index])
 
-            # # 如果都不满足，继续看下后面的基因点
+            # # If none of these satisfy you, keep looking at the gene points that follow
             # else:
             #     continue
-        # 合并子代的ms和os
+        # Merging the ms and os of children
         chr = np.hstack((ms_F, os_F))
         return chr
 
     def f3_operator(self,half_chr, chr_Fk, global_best_chr, pf, job_op_num):
-        # 分解成ms和os,其中os_Xk是不变化的
+        # Decomposition into ms and os, where os_Xk is unchanged
         # if chr_Fk is None:
         #     # 如果 chr_Fk 是 NoneType
         #     print("chr_Fk is None")
@@ -427,16 +427,16 @@ class FJSP_PSO(FJSP_Basic_algorithm):
         os_Xk = chr_Fk[half_chr:]
         ms_Pg = global_best_chr[:half_chr]
 
-        # 产生随机向量R,值为0-1
+        # Generate a random vector R with values 0-1.
         R = np.random.random_sample(half_chr)
-        # 找出R中小于pf的位置
+        # Find the position in R that is less than pf
         R_bool = R < pf
 
-        # 论文上画的图同样有大问题!!!!!不能简单的将os与ms对应起来，然后给ms赋值，
-        # 那样会导致比如某个工序本来最多可加工的机器个数为2，但是给它的染色体上的基因却为3了。
-        # 正确的理解是：将选中的比如工序O（1,2）在父代对应的ms的基因值赋值到子代的ms上O（1，2）的位置
-        # 用来存工件出现过几次的字典，形式{1：2}表示工件1出现了2次
-        # 跟算子2太像了没意思哎
+        # The diagram drawn on the paper has the same big problem !!!!! Can't simply map os to ms and assign a value to ms.
+        # That would result in, for example, a process that had a maximum number of machines that could be processed of 2, but was given a chromosome with 3 genes on it.
+        # The correct understanding is that the gene value of the selected, say, process O(1,2) on the corresponding ms of the parent is assigned to the position O(1, 2) on the ms of the child
+        # is used to store a dictionary of how many times an artifact has appeared, of the form {1:2} which means that artifact 1 has appeared 2 times
+        # It's too similar to Calculator 2. It's no fun.
         os_F_dict = {}
 
         for os_index, os in enumerate(os_Xk):
@@ -444,30 +444,30 @@ class FJSP_PSO(FJSP_Basic_algorithm):
                 os_F_dict[os] += 1
             else:
                 os_F_dict[os] = 1
-                # 只关心R中小于pf的部分,那部分才用全局最优去替换子代中的部分
+                # It only cares about the part of R that is smaller than pf , and that part is replaced by the global optimum in the offspring.
                 if R_bool[os_index]:
                     op_index = self.op_in_m(os, os_F_dict[os], job_op_num)
                     ms_Xk[op_index] = ms_Pg[op_index]
-        # 合并子代的ms和os
+        # Merging the ms and os of children
         chr = np.hstack((ms_Xk, os_Xk))
         return chr
 
     def f_operator(self,job_op_num, p_table, chr, single_best_chr, global_best_chr, pf, o_mega, c1, c2):
-        # 获得额外的参数
+        # Get additional parameters
         half_chr = p_table.shape[0]
         n = len(job_op_num)
         chr_Ek = chr
         chr_Fk = chr_Ek
-        # 产生0-1的随机数r1
+        # Generate 0-1 random number r1
         r1 = np.random.random()
         if r1 < o_mega:
-            # 执行f1操作
+            # Execute the f1 operation
             chr_Ek = self.f1_operator(chr, half_chr, p_table)
 
 
         r2 = np.random.random()
         if r2 < c1:
-            # 执行f2操作
+            # Perform the f2 operation
             if chr_Ek is None:
                 print('null')
             chr_Fk = self.f2_operator(n, half_chr, chr_Ek, single_best_chr, job_op_num)
@@ -476,7 +476,7 @@ class FJSP_PSO(FJSP_Basic_algorithm):
 
         r3 = np.random.random()
         if r3 < c2:
-            # 执行f3操作
+            # Execute the f3 operation
             chr_Xk = self.f3_operator(half_chr, chr_Fk, global_best_chr, pf, job_op_num)
         else:
             chr_Xk = chr_Fk
@@ -495,15 +495,15 @@ class FJSP_PSO(FJSP_Basic_algorithm):
                 chrs, p_table, job_op_num = self.init_Individual(file)
                 P = copy.deepcopy(chrs)
                 n = len(job_op_num)
-                # 机器数
+                # Number of machines
                 m = p_table.shape[1]
-                # 染色体长度的一半
+                # Half the length of a chromosome
                 half_chr = p_table.shape[0]
-                # 最大工序数
+                # Maximum number of processes
                 max_op = np.max(job_op_num)
                 fitness_list = []
                 for chr in chrs:
-                    # 染色体长度的一半 len(p_table)，得到MS和OS
+                    # half of the chromosome length len(p_table) to get MS and OS
                     MS = chr[:half_chr]
                     OS = chr[half_chr:]
 
@@ -513,12 +513,12 @@ class FJSP_PSO(FJSP_Basic_algorithm):
                 fitness_listall = []
                 for run in range(100000000):
                     pf = self.pf_max - (self.pf_max - self.pf_min) / self.Iter * run
-                    # 更新种群中所有的染色体
+                    # Update all chromosomes in the population
                     copy_chrs = copy.deepcopy(chrs)
                     chrs = [self.f_operator(job_op_num, p_table, chr, P[index], Pg, pf, self.o_mega, self.c1, self.c2)
                             for index, chr in
                             enumerate(copy_chrs)]
-                    # 更新个体最优位置
+                    # Updating the individual optimal position
                     for i in range(len(P)):
                         MSp = P[i][:half_chr]
                         OSp = P[i][half_chr:]
@@ -533,7 +533,7 @@ class FJSP_PSO(FJSP_Basic_algorithm):
                             P[i] = P[i]
                         else:
                             P[i] = chrs[i]
-                        # 更新全局最优位置
+                        # Update global optimal position
 
                         fitness_listall.append(problem.cal_FJSP_objective(
                             self.decode(parameters, [x - 1 for x in P[i][half_chr:]],

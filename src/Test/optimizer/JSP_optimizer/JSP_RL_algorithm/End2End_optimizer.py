@@ -28,60 +28,60 @@ def make_env(seed, instance):
         return _env
 
     return thunk
-# 读取算例改变样式
+# Changing styles by reading an example
 def read_instance(data,config):
     row1 = data[0]
     row2 = data[1]
-    h,l =np.shape(row1)# 第一行
+    h,l =np.shape(row1)# first row
     modified_lines = []
     for i in range(len(row1)):
         row_data = []
         for j in range(len(row1[i])):
             row_data.append([row2[i][j]-1, row1[i][j]])
         modified_lines.append(row_data)
-    # 写入新文件,修改npy变成txt
+    # Write new file, change npy to txt.
     new_filename = './Result/problem/JSP/JSP_test_datas/train_txt/'+config.test_datas_type+str(config.Pn_j)+'x'+str(config.Pn_m)+'_'+str(config.itration)+'.txt'
     with open(new_filename, 'w', encoding='utf-8') as file:
-        # 添加首行
+        # Adding a first line
         file.write(str(h)+'	'+str(l)+'\n')
-        # 遍历列表中的每个子列表 将子列表转换为字符串
+        # Iterate through each sublist in the list Convert sublists to strings
         for sublist in modified_lines:
             sublist_str = ''.join(str(num).replace(" ", "") for num in sublist)
-            # 去掉方括号和逗号,符合原来的样子
+            # Remove the square brackets and commas to match the original.
             sublist_str = sublist_str.replace("[", "").replace("]", "	").replace(",", "	").rstrip()
-            # 将子列表写入文件并添加换行符
+            # Write sublists to file and add newlines
             file.write(sublist_str + '\n')
     return new_filename
 # def read_instance(instance_filename):
 #
 #     new_instance = instance_filename.replace('instances_run/npy/', os.getcwd()+'/instances_run/instances_runNow/')
-#     # 加载数据
+#     # Load data
 #     dataLoaded = np.load(instance_filename)
 #     dataset = []
 #     for i in range(dataLoaded.shape[0]):
 #         dataset.append((dataLoaded[i][0], dataLoaded[i][1]))
-#     # 每次生成一个txt文件,每次循环数据格式转换
+#     # Each time to generate a txt file, each cycle of data format conversion
 #     for d in range(len(dataset)):
 #         row1 = dataset[d][0]
 #         row2 = dataset[d][1]
-#         h,l =np.shape(row1)# 第一行
+#         h,l =np.shape(row1)# first row
 #         modified_lines = []
 #         for i in range(len(row1)):
 #             row_data = []
 #             for j in range(len(row1[i])):
 #                 row_data.append([row2[i][j]-1, row1[i][j]])
 #             modified_lines.append(row_data)
-#         # 写入新文件,修改npy变成txt
+#         # Write new file, change npy to txt.
 #         new_filename = new_instance.replace('.npy', '_'+str(d)+'.txt')
 #         with open(new_filename, 'w', encoding='utf-8') as file:
-#             # 添加首行
+#             # Add first line
 #             file.write(str(h)+'	'+str(l)+'\n')
-#             # 遍历列表中的每个子列表 将子列表转换为字符串
+#             # Iterate through each sublist in the list Convert sublists to strings
 #             for sublist in modified_lines:
 #                 sublist_str = ''.join(str(num).replace(" ", "") for num in sublist)
-#                 # 去掉方括号和逗号,符合原来的样子
+#                 # Remove the square brackets and commas to match the original.
 #                 sublist_str = sublist_str.replace("[", "").replace("]", "	").replace(",", "	").rstrip()
-#                 # 将子列表写入文件并添加换行符
+#                 # Write sublists to file and add newlines
 #                 file.write(sublist_str + '\n')
 
 @ray.remote(num_cpus=1)
@@ -340,14 +340,14 @@ class End2End_optimizer(Basic_learning_algorithm):
     #
     #     # for each file in the 'instances_run' folder
     #     instances = []
-    #     # 读npy文件生成txt文件到instances_runNow文件夹
+    #     # Read npy file to generate txt file to instances_runNow folder
     #     # for file in sorted(os.listdir('instances_run/npy')):
     #     #     if file.startswith(NPY):
     #     #         read_instance('instances_run/npy/' + file)
     #     # for file2 in sorted(os.listdir('instances_run/instances_runNow/')):
     #     #     if file2.startswith(NPY):
     #     #         instances.append('instances_run/instances_runNow/' + file2)
-    #     # 原来的逻辑，读txt文件
+    #     # Original logic, read txt file
     #     instances.append(read_instance(data, config))
     #
     #     # wandb.login(key="3d6ab290f5a1128a46c4fe418c8e2187df67f1f0")

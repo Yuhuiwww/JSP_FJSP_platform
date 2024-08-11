@@ -9,12 +9,12 @@ class SPT(Basic_Rule):
         n_Job = len(dataset[0])
         m_Machine = len(dataset[0][0])
         start_time = time.time()
-        machine_op = np.zeros(n_Job, dtype=np.int32)  # 操作数
+        machine_op = np.zeros(n_Job, dtype=np.int32)  # operand
         for i in range(m_Machine):
-            # 获取当前列的所有元素
+            # Get all elements in the current column
             current_col = [(row_idx, dataset[0][row_idx][i]) for row_idx in range(n_Job)]
-            # 按照元素大小从小到大排序
+            # Sort by element size from smallest to largest
             current_col_sorted = sorted(current_col, key=lambda x: x[1])
-            # 将排序后的行号加入 Sequence 数组
+            # Add the sorted row numbers to the Sequence array.
             Sequence.extend([x[0] for x in current_col_sorted])
         return problem.cal_objective(Sequence, dataset)

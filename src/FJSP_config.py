@@ -72,13 +72,13 @@ def get_FJSPconfig(args=None):
     parser.add_argument('--problem_name', type=str, default='FJSP',help='problem_name position')
     parser.add_argument('--max_updates', type=int, default=1000, help='No. of episodes of each env for training')
     # parser.add_argument('--data_source', type=str, default='case')
-    #调度规则
+    #Scheduling rules
     parser.add_argument('--online_arrivals', type=str2bool, default=False, help='false for static instance (from data) or true for online job arrivals')
     parser.add_argument('--problem_instances', type=str, default='SD1')
     parser.add_argument('--dispatching_rule', type=str, default='MWR')
     parser.add_argument('--machine_assignment_rule', type=str, default='SPT')
     parser.add_argument('--File_GAN', type=str, default='[]')
-    #Gurobi终止时间
+    #Gurobi termination time
     parser.add_argument('--FJSP_gurobi_time_limit', type=int, default=3600)
     parser.add_argument('--data_type', type=str, default="test", help='Generated data type (test/vali)')
     parser.add_argument('--seed_datagen', type=int, default=200, help='Seed for data generation')

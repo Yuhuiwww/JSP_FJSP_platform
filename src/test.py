@@ -141,7 +141,7 @@ class Tester(object):
         with open('./Result/JSP/'+self.config.optimizer + '-best-solution.txt', 'a') as f:
             f.write(self.config.test_datas_type + str(self.config.Pn_j) + 'x' + str(self.config.Pn_m) + '\n')
             for i in range(len(dataset)):
-                print("第",i,"个算例")
+                print("The ",i," example")
                 # optimizer.run_episode(problem, dataset[i])
                 min_makespan = optimizer.run_episode(problem, dataset[i])
                 f.write(str(min_makespan) + '\n')
@@ -153,7 +153,7 @@ class Tester(object):
             f.write(self.config.test_datas_type + str(self.config.Pn_j) + 'x' + str(self.config.Pn_m) + '\n')
             for i in range(len(dataset)):
                 start_time = time.time()
-                print("第", i, "个算例")
+                print("The ", i, " example")
                 min_makespan = optimizer.run_rule(problem, dataset[i])
                 runtime = time.time() - start_time
                 f.write(str(min_makespan) + ' ' + str(runtime) + '\n')
@@ -167,5 +167,5 @@ class Tester(object):
                 if file_name.endswith('.fjs'):
                     file_path = os.path.join(filesPath, file_name)
                     min_makespan,runtime=optimizer.run_rule(file_path)
-                    # print("最小完工时间", min_makespan)
+                    # print("Minimum Completion Time ", min_makespan)
                     f.write(str(min_makespan) + ' ' + str(runtime) + '\n')

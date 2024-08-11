@@ -28,15 +28,15 @@ class MLP(torch.nn.Module):
         self.layers = torch.nn.ModuleList()
 
         for l in range(num_layers):
-            if l == 0:  # first layer，第一层
+            if l == 0:  # first layer
                 self.layers.append(torch.nn.Linear(in_chnl, hidden_chnl))
                 self.layers.append(torch.nn.ReLU())
                 if num_layers == 1:
                     self.layers.append(torch.nn.Linear(hidden_chnl, out_chnl))
-            elif l <= num_layers - 2:  # hidden layers，隐藏层
+            elif l <= num_layers - 2:  # hidden layers
                 self.layers.append(torch.nn.Linear(hidden_chnl, hidden_chnl))
                 self.layers.append(torch.nn.ReLU())
-            else:  # last layer，输出层
+            else:  # last layer
                 self.layers.append(torch.nn.Linear(hidden_chnl, hidden_chnl))
                 self.layers.append(torch.nn.ReLU())
                 self.layers.append(torch.nn.Linear(hidden_chnl, out_chnl))
@@ -48,7 +48,7 @@ class MLP(torch.nn.Module):
 
 class RLGNNLayer(MessagePassing):
     """
-    图神经网络层
+    Graph Neural Network Layers
     """
 
     def __init__(self,
@@ -123,12 +123,12 @@ class RLGNN(torch.nn.Module):
         self.layers = torch.nn.ModuleList()
 
         for l in range(num_layer):
-            if l == 0:  # initial layer，初始层
+            if l == 0:  # initial layer
                 self.layers.append(RLGNNLayer(num_mlp_layer=num_mlp_layer,
                                               in_chnl=in_chnl,
                                               hidden_chnl=hidden_chnl,
                                               out_chnl=out_chnl))
-            else:  # the rest layers，其他层
+            else:  # the rest layers
                 self.layers.append(RLGNNLayer(num_mlp_layer=num_mlp_layer,
                                               in_chnl=out_chnl,
                                               hidden_chnl=hidden_chnl,
@@ -141,7 +141,7 @@ class RLGNN(torch.nn.Module):
 
 class PolicyNet(torch.nn.Module):
     """
-    策略网络模型
+    Policy Network Model (PNM)
     """
 
     def __init__(self,
@@ -164,7 +164,7 @@ class PolicyNet(torch.nn.Module):
 
 class CriticNet(torch.nn.Module):
     """
-    评论家网络模型
+    Critic Network Model
     """
 
     def __init__(self,
@@ -198,12 +198,12 @@ class GNN_optimizer(Basic_learning_algorithm):
 
     def to_pyg(self, g, dev):
         """
-        将原始图转换为PyG格式
+        Convert the original diagram to PyG format
         Args:
-            g: networkx.Graph，原始图
-            dev: str，设备名
+            g: networkx.Graph，original drawing
+            dev: str，device name
         Returns:
-            torch_geometric.Data，处理后的图
+            torch_geometric.Data，Processed Chart
         """
         x = []
         one_hot = np.eye(3, dtype=np.float32)[np.fromiter(nx.get_node_attributes(g, 'type').values(), dtype=np.int32)]
@@ -228,7 +228,7 @@ class GNN_optimizer(Basic_learning_algorithm):
 
         for n in g.nodes:
             if g.nodes[n]['type'] == 1:
-                x[n] = 0  # 已完成的操作特征为0
+                x[n] = 0  # Completed operations characterized as 0
 
         adj_pre = np.zeros([g.number_of_nodes(), g.number_of_nodes()], dtype=np.float32)
         adj_suc = np.zeros([g.number_of_nodes(), g.number_of_nodes()], dtype=np.float32)
@@ -236,12 +236,12 @@ class GNN_optimizer(Basic_learning_algorithm):
         xx,yy = adj_dis.shape
         for e in g.edges:
             s, t = e
-            if g.nodes[s]['id'][0] == g.nodes[t]['id'][0]:  # conjunctive edge，连接边
-                if g.nodes[s]['id'][1] < g.nodes[t]['id'][1]:  # forward，正向
+            if g.nodes[s]['id'][0] == g.nodes[t]['id'][0]:  # conjunctive edge
+                if g.nodes[s]['id'][1] < g.nodes[t]['id'][1]:  # forward
                     adj_pre[s, t] = 1
-                else:  # backward，反向
+                else:  # backward
                     adj_suc[s, t] = 1
-            else:  # disjunctive edge，离散边
+            else:  # disjunctive edge
                 if s>xx:
                     print(s)
                 if t>xx:
@@ -272,24 +272,24 @@ class GNN_optimizer(Basic_learning_algorithm):
             do_op_dict = s.get_doable_ops_in_dict()
             all_machine_work = False if bool(do_op_dict) else True
 
-            if all_machine_work:  # 所有机器都在进行工作，继续进行
+            if all_machine_work:  # All machines are working. Keep going.
                 s.process_one_time()
-            else:  # 一些机器可能有琐碎的行为，另一些则没有
-                _, _, done, sub_list = s.flush_trivial_ops(reward='makespan')  # 清空琐碎的行为
+            else:  # Some machines may have trivial behavior, others do not
+                _, _, done, sub_list = s.flush_trivial_ops(reward='makespan')  # Emptying trivial behavior
                 p_list += sub_list
                 if done:
-                    break  # 环境rollout结束
+                    break  # End of environment rollout
                 g, r, done = s.observe(return_doable=True)
-                if embedding_net is not None and policy_net is not None and critic_net is not None:  # 网络前向传播在这里进行
+                if embedding_net is not None and policy_net is not None and critic_net is not None:  # Web Forward Propagation is here to stay
                     g_pre, g_suc, g_dis = self.to_pyg(g, dev)
-                    raw_feature = g_pre.x  # pre、suc或dis都可以
+                    raw_feature = g_pre.x  # Pre, suc or dis are all fine.
                     pyg_graphs = {'pre': g_pre, 'suc': g_suc, 'dis': g_dis}
                     pyg_graphs = embedding_net(raw_feature, **pyg_graphs)
                     feasible_op_id = s.get_doable_ops_in_list()
-                    sampled_action, _ = policy_net(pyg_graphs['pre'].x, feasible_op_id)  # pre、suc或dis都可以
+                    sampled_action, _ = policy_net(pyg_graphs['pre'].x, feasible_op_id)  # Pre, suc or dis are all fine.
                     s.transit(sampled_action)
                     p_list.append(sampled_action)
-                    v = critic_net(pyg_graphs['pre'].x)  # pre、suc或dis都可以
+                    v = critic_net(pyg_graphs['pre'].x)  # Pre, suc or dis are all fine.
                 else:
                     op_id = s.transit()
                     p_list.append(op_id)
@@ -297,17 +297,17 @@ class GNN_optimizer(Basic_learning_algorithm):
             # if t2 - t1 > max_run_time:
             #     done=True
             if done:
-                break  # 环境rollout结束
+                break  # End of environment rollout
         t2 = time.time()
         # if verbose:
-        #     print('所有任务完成，makespan={}. Rollout花费时间 {} 秒'.format(s.global_time, t2 - t1))
+        #     print('All tasks completed, makespan={}. Rollout spends time {} seconds'.format(s.global_time, t2 - t1))
         return p_list, t2 - t1, s.global_time
 
     def update(self, data, config):
         t1 = time.time()
-        embed = RLGNN()  # 图神经网络模型
-        policy = PolicyNet()  # 策略网络模型
-        critic = CriticNet()  # 值
+        embed = RLGNN()  # GNN
+        policy = PolicyNet()  # Policy Network Model
+        critic = CriticNet()  # value
         _, t, min_makespan = GNN_optimizer.rollout(self, data, config, dev, embed, policy, critic)
         t2 = time.time()
         print('makespan', min_makespan, 'time', t2 - t1)

@@ -8,13 +8,13 @@ class SRPT(Basic_Rule):
         Sequence=[]
         n_Job = len(dataset[0])
         m_Machine = len(dataset[0][0])
-        job_op = np.zeros(n_Job, dtype=np.int32)  # 操作数
-        remaining_time = [0] * n_Job  # 用于存储每个作业的剩余处理时间
+        job_op = np.zeros(n_Job, dtype=np.int32)  # operand
+        remaining_time = [0] * n_Job  # Used to store the remaining processing time for each job
         start_time = time.time()
         for i in range(n_Job):
             for j in range(m_Machine):
-                remaining_time[i] += dataset[0][i][j]  # 开始，剩余时间为总处理时间
-            # 获取当前列的所有元素
+                remaining_time[i] += dataset[0][i][j]  # Starting, the remaining time is the total processing time
+            # Get all elements in the current column
         for i in range(m_Machine * n_Job):
             current_col = [(row_idx, remaining_time[row_idx]) for row_idx in range(n_Job) if
                            remaining_time[row_idx] != 0]
@@ -23,7 +23,7 @@ class SRPT(Basic_Rule):
                 Job = current_col_sorted[0][0]
                 Sequence.append(current_col_sorted[0][0])
                 Op = job_op[Job]
-                # 更新剩余处理时间
+                # Update remaining processing time
                 remaining_time[Job] -= dataset[0][Job][Op]
                 job_op[Job] += 1
 
