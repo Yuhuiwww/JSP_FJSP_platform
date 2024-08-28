@@ -171,7 +171,7 @@ def get_FJSPconfig(args=None):
 
     parser.add_argument('--actor_in_dim', type=int, default=0)
     parser.add_argument('--critic_in_dim', type=int, default=0)
-
+    parser.add_argument('--enableCpl', type=bool, default=False, help='use c++ exe')
 
     config = parser.parse_args()
 

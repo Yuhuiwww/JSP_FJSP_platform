@@ -18,16 +18,16 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Unsupported value encountered.')
 def get_config(args=None):
+    # parser = argparse.ArgumentParser(description='Arguments for ppo_jssp')
     parser = argparse.ArgumentParser(description='Arguments for ppo_jssp')
-    parser = argparse.ArgumentParser(description='Arguments for ppo_jssp')
-    parser.add_argument('--optimizer', type=str, default='L2D_optimizer')
+    parser.add_argument('--optimizer', type=str, default='GA')
     parser.add_argument('--Pn_j', type=int, default=50, help='Number of jobs of instances to test')
     parser.add_argument('--Pn_m', type=int, default=20, help='Number of machines instances to test')
     parser.add_argument('--seed_test', type=int, default=50, help='Seed for testing heuristics')
     parser.add_argument('--low', type=int, default=1, help='LB of duration')
     parser.add_argument('--high', type=int, default=99, help='UB of duration')
     parser.add_argument('--seed', type=int, default=200, help='Seed for validate set generation')
-    parser.add_argument('--test_datas', type=str, default='Train/JSP_train/',
+    parser.add_argument('--test_datas', type=str, default='Test/data_test/JSP_benchmark/',
                         help='test_datas position')#'Test/data_test/JSP_benchmark/','Train/JSP_train/L2S_train/','Train/JSP_train/L2D_train/',
     parser.add_argument('--test_datas_type', type=str, default='dmu')
     parser.add_argument('--model_source', type=str, default='tai', help='Suffix of the data that model trained on')
@@ -132,6 +132,7 @@ def get_config(args=None):
     parser.add_argument('--seed_train', type=int, default=300, help='Seed for training')
     parser.add_argument('--runtime', type=int, default=1000, help='Seed for training')
     parser.add_argument('--JSP_gurobi_time_limit', type=int, default=3600)
+    parser.add_argument('--enableCpl', type=bool, default=False, help='use c++ exe')
     config = parser.parse_args()
 
     config.run_time = f'{time.strftime("%Y%m%dT%H%M%S")}_{config.problem_name}D'
