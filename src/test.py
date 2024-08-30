@@ -137,7 +137,7 @@ class Tester(object):
     def test_JSP_algorithm(self):
         optimizer = eval(self.config.optimizer)(copy.deepcopy(self.config))
         dataset = load_data(self.config)
-        problem = eval(self.config.problem_name)(copy.deepcopy(self.config.Pn_j), copy.deepcopy(self.config.Pn_m))
+        problem = eval(self.config.problem_name)(copy.deepcopy(self.config.Pn_j), copy.deepcopy(self.config.Pn_m),copy.deepcopy(self.config.DecodingScheme))
         with open('./Result/JSP/'+self.config.optimizer + '-best-solution.txt', 'a') as f:
             f.write(self.config.test_datas_type + str(self.config.Pn_j) + 'x' + str(self.config.Pn_m) + '\n')
             for i in range(len(dataset)):

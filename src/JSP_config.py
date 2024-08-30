@@ -133,6 +133,8 @@ def get_config(args=None):
     parser.add_argument('--runtime', type=int, default=1000, help='Seed for training')
     parser.add_argument('--JSP_gurobi_time_limit', type=int, default=3600)
     parser.add_argument('--enableCpl', type=bool, default=False, help='use c++ exe')
+    parser.add_argument('--DecodingScheme', type=str, default='semi')
+
     config = parser.parse_args()
 
     config.run_time = f'{time.strftime("%Y%m%dT%H%M%S")}_{config.problem_name}D'

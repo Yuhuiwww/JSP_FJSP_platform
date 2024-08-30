@@ -93,7 +93,7 @@ class PSO(Basic_Algorithm):
         global_best_individual = None
         best_minfiness=9999999
         velocities = np.zeros((num_particles, num_jobs * num_machines), dtype=int)
-        problem = eval(config.problem_name)(copy.deepcopy(config.Pn_j), copy.deepcopy(config.Pn_m))
+        problem = eval(config.problem_name)(copy.deepcopy(config.Pn_j), copy.deepcopy(config.Pn_m),copy.deepcopy(self.config.DecodingScheme))
         max_time = config.Pn_j * config.Pn_m
         with open('./Result/JSP/'+self.config.optimizer + '-20 times runing solution.txt', 'a') as f:
             f.write(self.config.test_datas_type + str(self.config.Pn_j) + 'x' + str(self.config.Pn_m) + '\n')

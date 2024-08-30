@@ -130,7 +130,7 @@ class GA(Basic_Algorithm):
                 chromosome[mutationpoints[0]] = chrom_copy[mutationpoints[-1]]
         makespan_list = np.zeros(len(childlist))
         # Configuring problem_name selection issues
-        problem = eval(config.problem_name)(copy.deepcopy(config.Pn_j), copy.deepcopy(config.Pn_m))
+        problem = eval(config.problem_name)(copy.deepcopy(config.Pn_j), copy.deepcopy(config.Pn_m),copy.deepcopy(self.config.DecodingScheme))
         for i, chromosome in enumerate(childlist):
             makespan_list[i] = problem.cal_objective(chromosome, dataset)
 

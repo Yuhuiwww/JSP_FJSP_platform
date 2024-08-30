@@ -16,6 +16,7 @@ title={BPLS-JSS: A Benchmark Platform for Evaluating Learning-based job shop Sch
 
 ```python
 src   
+├── C++exe                                               // c++ exe
 ├── Problem                         			 // Problem module
 │       └── Basic_problem.py                        	 // Problem base class interface
 │       └── FJSP.py                        	         // FJSP decoding
@@ -38,6 +39,7 @@ src
 ├── FJSP_config.py         				 // Parameter configuration of FJSP
 ├── JSP_config.py         				 // Parameter configuration of JSP
 ├── LoadUtils.py         				 // Load datas of JSP and FJSP
+├── main-C++.py                                          // Conduct C++ exe
 
 
 ```

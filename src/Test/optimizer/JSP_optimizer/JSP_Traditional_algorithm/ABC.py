@@ -42,7 +42,7 @@ class ABC(Basic_Algorithm):
         self.swap(individual,positions[0], positions[1])
         return individual
     def scout_bees(self,config,population_list,data):
-        problem = eval(config.problem_name)(copy.deepcopy(config.Pn_j), copy.deepcopy(config.Pn_m))
+        problem = eval(config.problem_name)(copy.deepcopy(config.Pn_j), copy.deepcopy(config.Pn_m),copy.deepcopy(self.config.DecodingScheme))
         population_list1=copy.deepcopy(population_list)
         for i in range(self.population_size):
             positions = random.sample(range(len(population_list[i])), 2)
