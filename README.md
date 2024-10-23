@@ -202,4 +202,19 @@ Evolutionary algorithms are [ABC](https://ieeexplore.ieee.org/abstract/document/
 
 For the L2D and L2S in JSP and FJSP_DAN and FJSP_GNN in FJSP need to be retrained to obtain the training model.
 
+## **Get results**
+We provide pre-trained models and instances to reproduce the results in the paper. Please cd to ./Train, and ./Test/data_test. Then, follow the below instructions.
+
+1. Unzip JSP_FJSP_platform-C737.zip
+2. For Python code, modify the problem and algorithm types in main.py according to your request,  set the algorithm and the corresponding parameters in [JSP_config.py](https://anonymous.4open.science/r/JSP_FJSP_platform-C737/src/JSP_config.py) and [FJSP_config.py](https://anonymous.4open.science/r/JSP_FJSP_platform-C737/src/FJSP_config.py), and run								
+```
+main.py
+```
+
+3. For C++ code, modify the exe file according to your request in [main-C++.py](https://anonymous.4open.science/r/JSP_FJSP_platform-C737/src/main-C++.py) and run
+```
+main-C++.py
+```																
+4. To generate a new model, select the.py file that needs to be trained in.\Train\ for model training
+5. All the results of the run can be saved as txt in the./Result folder
  
